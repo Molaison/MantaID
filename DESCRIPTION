@@ -1,0 +1,33 @@
+Package: IDentifyEngine
+Title: ID identification Engine
+Version: 0.0.0.9000
+Authors@R: 
+    person("Zeng", "Zhengpeng",
+      email = "molaison@foxmail.com", role = c("aut","cre","ctb"),
+      comment = c(ORCID = "0000-0001-7919-209X")
+    )
+Description: Provide a pipe for gene ID classification.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.0
+Suggests: 
+Depends: 
+    R (>= 4.2.0)
+Imports:
+	biomaRt, 
+	caret, 
+	data.table, 
+	dplyr, 
+	ggplot2, 
+	keras,
+    magrittr, 
+    mlr3, 
+    purrr, 
+    reshape2, 
+    scutr, 
+    stringr,
+    tibble, 
+    tidyr, 
+    tidyselect
+LazyData: true
