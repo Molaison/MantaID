@@ -6,4 +6,4 @@
 #' 	\item{description}{Description of dataset.}
 #' 	\item{page}{collection of attributes.}
 #' }
-"attributes"
+"mt_data_attributes"

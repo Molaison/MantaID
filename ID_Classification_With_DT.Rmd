@@ -144,7 +144,7 @@ tensorflow::install_tensorflow()
 参数的意义分别为(1)train,训练集;(2)test,测试集;(3)path2save,存储训练后模型的路径,默认为NULL,不保存;(4)batch_size,训练时的批次大小,越大训练单期时间越短,但达到相同精度的期数增大;(5)epochs,训练的期数,所有样本训练一次为一期;(6)validation_split,训练集中被用于划分为验证集的数据集的比例;
 
 ```{R}
-result_net <- BPNN(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
+result_net <- mt_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
 ```
 
 ### 混淆矩阵:
