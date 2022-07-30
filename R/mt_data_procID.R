@@ -4,4 +4,4 @@
 #'   \item{pos1 to pos20}{Splited ID.}
 #'   \item{class}{The databases that ID belongs to.}
 #' }
-"ProcData"
+"mt_data_procID"
