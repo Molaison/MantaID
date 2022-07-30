@@ -7,7 +7,7 @@ globalVariables(".")
 #' @importFrom tidyselect everything
 #' @importFrom data.table as.data.table
 #' @export
-prd_new <- function(data, learner) {
+mt_predict_new <- function(data, learner) {
   data %>%
     mutate(across(.cols = everything(), .fns = as.numeric)) %>%
     # 将数据类型转为数值型
@@ -30,7 +30,7 @@ prd_new <- function(data, learner) {
 #' @importFrom magrittr %>% %T>%
 #' @export
 #' @return A tibble data frame that records the number of wrong predictions for each category ID;
-mstk_prd <- function(predict) {
+mt_get_miss <- function(predict) {
   stopifnot(any(class(predict) == "PredictionClassif"))
   result <- predict %>%
     as.data.table() %>%
@@ -51,7 +51,7 @@ mstk_prd <- function(predict) {
 #' @return A `confusionMatrix` object.
 #' @export
 #'
-cnfs_matri <- function(result_list, ifnet = F) {
+mt_get_confusion <- function(result_list, ifnet = F) {
   if (ifnet) {
     return(result_list[[2]])
   }
@@ -73,16 +73,17 @@ cnfs_matri <- function(result_list, ifnet = F) {
 #' @return A `ggplot` object.
 #' @export
 
-htmp_confu <- function(table, name, filepath = NULL) {
+mt_plot_heatmap <- function(table,name = NULL, filepath = NULL) {
   melted <- table %>%
     as.table() %>%
-    melt() %>%
-    group_by("Reference") %>%
-    mutate(across(.cols = "value", .fns = ~ .x / sum(.x))) %>%
-    ungroup()
-  heat <- ggplot(melted, aes(x = "Reference", y = "Prediction", fill = "value")) +
+    melt() #%>%
+    # group_by(.data[['Reference']]) %>%
+    # mutate(across(.cols = .data[['value']], .fns = ~ .x / sum(.x))) %>%
+    # ungroup()
+
+  heat <- ggplot(melted, aes(x = .data[['Reference']], y =.data[['Prediction']], fill = .data[['value']])) +
     geom_tile() +
-    geom_text(aes("Reference", "Prediction", label = na_if(round("value", 2), 0)), color = "#00468B99", size = 2) +
+    geom_text(aes(label = na_if(round(.data[['value']], 2), 0)), color = "#00468B99", size = 2) +
     theme_bw() +
     coord_equal() +
     # scale_fill_gradient2(low="#003366", high="#990033",mid = "white") +

@@ -15,7 +15,7 @@ library(magrittr)
 #' @importFrom magrittr %>%
 #' @return A dataframe.
 #' @export
-GET_ID_attributes <- function(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia") {
+mt_get_ID_attr <- function(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia") {
   # 使用asia mirror获取hsapiens_gene_ensembl数据库
   ensemb_hm_dset <- useEnsembl(biomart = biomart, dataset = dataset, mirror = mirror, verbose = TRUE)
   attributes <- listAttributes(ensemb_hm_dset) %>%
@@ -29,8 +29,11 @@ GET_ID_attributes <- function(biomart = "genes", dataset = "hsapiens_gene_ensemb
 
 #' Get ID data from `Biomart` database use `attributes`.
 #'
-#' @param Ensembl `Mart` object from `biomaRt`.
-#' @param attributes A dataframe.The information we want to retrieve.Use `GET_ID_attributes` to hava try.
+#' @param dataset Datasets of the selected BioMart database.
+#' @param mirror Specify an Ensembl mirror to connect to.
+#' @param biomart BioMart database name you want to connect to.Use `biomaRt::listEnsembl` to retrieve the possible database names.
+#' @param attributes A dataframe.The information we want to retrieve.Use `mt_get_ID_attr` to hava try.
+#'
 #' @importFrom biomaRt useEnsembl getBM
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr mutate across rename select
@@ -41,11 +44,9 @@ GET_ID_attributes <- function(biomart = "genes", dataset = "hsapiens_gene_ensemb
 #'
 #' @examples
 #' data(attributes)
-#' GETID(attributes[1:3, ])
-GETID <- function(attributes, Ensembl = NULL) {
-  if (is.null(Ensembl)) {
-    Ensembl <- useEnsembl(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia", verbose = TRUE)
-  }
+#' mt_get_ID(attributes[1:3, ])
+mt_get_ID <- function(attributes, biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia") {
+    Ensembl <- useEnsembl(biomart = biomart, dataset = dataset, mirror = mirror, verbose = TRUE)
   out <- vector("list", length = nrow(attributes))
   for (i in 1:nrow(attributes)) {
     try_result <- try({

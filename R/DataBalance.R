@@ -15,8 +15,8 @@
 #' @examples
 #' library(dplyr)
 #' data = rename(iris,class =Species)
-#' balance_data(data)
-balance_data <- function(data, ratio = 0.3, parallel = F) {
+#' mt_balance_data(data)
+mt_balance_data <- function(data, ratio = 0.3, parallel = F) {
   system.time({
     # 多分类数据平衡,欠采样样本采用随机采样,过采样部分采用smote方法采样,获得相对平衡的数据;
     if(parallel){

@@ -18,8 +18,8 @@
 #' 'class2' = c("E","F","G","H"),
 #' 'class3' = c("L","M","-","O")
 #' )
-#' data_clean(data)
-data_clean <- function(data, cols = everything(), placeholder = c("-")) {
+#' mt_clean_data(data)
+mt_clean_data <- function(data, cols = everything(), placeholder = c("-")) {
   data %<>% as_tibble() %>%
     select(cols) %>%
     mutate_at(colnames(.), ~ as.character(.x)) %>%
@@ -44,8 +44,8 @@ data_clean <- function(data, cols = everything(), placeholder = c("-")) {
 #' @examples
 #' string_test = "Good Job"
 #' length = 15
-#' string_split(string_test,length)
-string_split <- function(str, pad_len) {
+#' mt_split_str(string_test,length)
+mt_split_str <- function(str, pad_len) {
   str %>%
     as.character() %>%
     strsplit(split = "") %>%
@@ -67,17 +67,17 @@ string_split <- function(str, pad_len) {
 #' @export
 #' @examples
 #' data(ID_sample)
-#' col_split(ID_sample,cores = 1,pad_len = 10)
-col_split <- function(data, cores = NULL, pad_len = 10) {
+#' mt_split_col(ID_sample,cores = 1,pad_len = 10)
+mt_split_col <- function(data, cores = NULL, pad_len = 10) {
   # 2.计算计算机内核数
-  core_max <- detectCores(logical = FALSE)
+  core_max <- detectCores(logical = FALSE)%/%2
   # 3.打开并行计算
   if (is.null(cores)) {
     cl <- makeCluster(core_max)
   } else {
     cl <- makeCluster(cores)
   }
-  string_split <- function(str, pad_len) {
+  mt_split_str <- function(str, pad_len) {
     str %>%
       as.character() %>%
       strsplit(split = "") %>%
@@ -86,10 +86,10 @@ col_split <- function(data, cores = NULL, pad_len = 10) {
       .[1:pad_len]
   }
   # 4.给每个单独内核传递变量,函数等
-  clusterExport(cl, varlist = c("pad_len", "string_split"), envir = environment())
+  clusterExport(cl, varlist = c("pad_len", "mt_split_str"), envir = environment())
   clusterEvalQ(cl, c(library(data.table), library(magrittr), library(stringr),library(dplyr)))
   # 5.开始并行计算（用法与sapply类似）
-  output <- parSapply(cl, data[, 1][[1]], string_split, pad_len)
+  output <- parSapply(cl, data[, 1][[1]], mt_split_str, pad_len)
   # 6.关闭并行计算
   stopCluster(cl)
   output %>%
@@ -98,16 +98,32 @@ col_split <- function(data, cores = NULL, pad_len = 10) {
     bind_cols(data[, 2]) %>%
     set_names(c(str_c("pos", 1:pad_len),"class"))
 }
-#' Convert data to factor type, and for ID column convert with fixed levels.
+
+#' Get max length of ID data.
+#'
+#' @param data A dataframe.
+#' @importFrom dplyr pull
+#' @return A int.
+#' @export
+mt_get_padlen <- function(data){
+  data %>%
+  pull("ID") %>%
+  map(nchar) %>%
+  unlist() %>%
+  max()
+}
+#' Convert data to numeric, and for ID column convert with fixed levels.
 #' @export
 #' @importFrom  dplyr across mutate
 #' @param data A tibble with n position column(pos1,pos2,...) and class column.
 #' @param levels Characters accommodated in IDs.
+#' @examples
 #' data(ID_sample)
-#' str(col_split(ID_sample,cores = 1,pad_len = 10))
-#' str(to_factor(col_split(ID_sample,cores = 1,pad_len = 10)))
-to_factor <- function(data, levels = c("*", 0:9, letters, LETTERS, "_", ".", "-", " ", "/", "\\", ":")) {
+#' str(mt_split_col(ID_sample,cores = 1,pad_len = 10))
+#' str(mt_to_numer(mt_split_col(ID_sample,cores = 1,pad_len = 10)))
+mt_to_numer <- function(data, levels = c("*", 0:9, letters, LETTERS, "_", ".", "-", " ", "/", "\\", ":")) {
   data %>%
     mutate(across(.cols = -"class", .fns = ~ factor(.x, levels = levels))) %>%
-    mutate(across(.cols = "class", .fns = factor))
+    mutate(across(.cols = "class", .fns = factor)) %>%
+    mutate(across(.cols = -"class", .fns = as.numeric))
 }

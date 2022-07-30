@@ -11,8 +11,11 @@
 #' @export
 #' @examples
 #' data(ProcData)
-bench_mark <- function(data, row_num = 4000, resamplings = rsmps("bootstrap", repeats = 5)) {
+mt_run_bmr <- function(data, row_num = 4000, resamplings = rsmps("cv", folds = 10)) {
   data <- data %>% mutate(across(.cols = -class,.fns = as.numeric))
+  if(nrow(data)<row_num){
+    row_num = nrow(data)
+  }
   task <- data %>%
     # 抽取一定量样本作为训练集
     slice(sample(nrow(data), row_num), preserve = TRUE) %>%
@@ -50,8 +53,9 @@ bench_mark <- function(data, row_num = 4000, resamplings = rsmps("bootstrap", re
 #' @importFrom data.table as.data.table
 #' @importFrom mlr3 as_task_classif lrn  set_threads msr partition
 #' @export
-model_rp <- function(train, test, measure = msr("classif.acc")) {
-  learner <- lrn("classif.rpart", keep_model = TRUE)
+mt_train_rp <- function(train, test, measure = msr("classif.acc")) {
+  learner <- lrn("classif.rpart", keep_model = TRUE,xval=0, cp=0.0005253, maxdepth=24,
+                 minsplit=4, maxcompete=3)
   # 保存模型,设置class为目标列
   task_train <- train %>%
     as.data.table() %>%
@@ -78,11 +82,14 @@ model_rp <- function(train, test, measure = msr("classif.acc")) {
 #' @param measure Model evaluation method.
 #' @param train A dataframe.
 #' @param test A dataframe.
+#'
 #' @importFrom data.table as.data.table
 #' @importFrom mlr3 as_task_classif lrn  set_threads msr partition
 #' @export
-model_rg <- function(train, test, measure = msr("classif.acc")) {
-  learner <- lrn("classif.ranger")
+mt_train_rg <- function(train, test, measure = msr("classif.acc")) {
+  learner <- lrn("classif.ranger",importance='impurity',
+                 regularization.factor=0.01407, minprop=0.01667, num.trees=385,
+                 max.depth=368)
   task_train <- train %>%
     as.data.table() %>%
     as_task_classif(target = "class", feature = -c("class"))
@@ -112,8 +119,10 @@ model_rg <- function(train, test, measure = msr("classif.acc")) {
 #' @importFrom data.table as.data.table
 #' @importFrom mlr3 as_task_classif lrn  set_threads msr partition
 #' @export
-model_xgboost <- function(train, test, measure = msr("classif.acc")) {
-  learner <- lrn("classif.xgboost")
+mt_train_xgb <- function(train, test, measure = msr("classif.acc")) {
+  learner <- lrn("classif.xgboost",nrounds=10, nthread=1, verbose=0, max_depth=8,
+                 subsample=0.8358, min_child_weight=0.9225,
+                 colsample_bytree=0.9852, eta=0.2885)
   # 保存模型,设置class为目标列
   task_train <- train %>%
     as.data.table() %>%
@@ -156,7 +165,7 @@ model_xgboost <- function(train, test, measure = msr("classif.acc")) {
 #' @return A `list` object th at contains the prediction confusion matrix and the `model` object.
 #' @export
 
-DeepLearn <- function(train, test, cls = "class", path2save, batch_size = 128, epochs = 64, validation_split = 0.3) {
+BPNN <- function(train, test, cls = "class", path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3) {
   train <- train %>%
     rename("class" = cls)
   test <- test %>%
@@ -198,7 +207,10 @@ DeepLearn <- function(train, test, cls = "class", path2save, batch_size = 128, e
     validation_split = 0.3, verbose = 2
   )
   # save_model_tf(model, "result_net_usmld")
-  save_model_tf(model, str_c(path2save, "result_net"))
+  if(!is.null(path2save)){
+    save_model_tf(model, str_c(path2save, "/result_net"))
+  }
+
   # model <- load_model_tf("DeepLearning_Model/result_net/")
   predictions <- predict(model, test_set)
   response <- predictions %>% k_argmax()
