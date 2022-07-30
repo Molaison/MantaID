@@ -32,7 +32,7 @@ knitr::opts_chunk$set(time_it = TRUE)
 packages <- c("biomartr", "biomaRt", "tidyverse", "magrittr", "data.table", "magrittr", "mlr3verse", "skimr", "roxygen2", "tidyverse", "parallel", "scutr", "reshape2", "RColorBrewer", "caret", "tensorflow", "keras", "reticulate", "skimr", "tfdatasets")
 for (pac in packages) {
   tryCatch({
-  	if(!require(pac)){install.packages(pac,repos = "https://cloud.r-project.org")}},warning = function(){
+  	if(!require((pac))){install.packages(pac,repos = "https://cloud.r-project.org")}},warning = function(){
     tryCatch({
       if(!require(pac)){BiocManager::install(pac,update	=F)}
     },warning = function(){
@@ -46,7 +46,10 @@ for (pac in packages) {
 if(!require(IDentifyEngine)){
 	devtools::install_bitbucket("Molaison/IDentifyengine")
 }
-
+for(pac in packages){
+	library(pac,character.only = TRUE)
+}
+library(IDentifyEngine)
 ```
 
 #### 数据获取:
@@ -55,22 +58,22 @@ biomaRt 向 R 和 BioMart software suite
 的数据库（例如`Ensembl`,`Uniprot`,`HapMap`）提供了一个接口,可以通过R直接获取数据库中的信息。
 
 通过`biomart`、`dataset`
-设置要连接的`BioMart`数据集,这里选择使用人类基因组数据集,Mirror选择：`asia mirror`(根据地区而定);使用`mt_get_ID_attr`获取与ID相关的数据集的属性;
+设置要连接的`BioMart`数据集,这里选择使用人类基因组数据集,Mirror选择：`asia mirror`(根据地区而定);使用`mi_get_ID_attr`获取与ID相关的数据集的属性;
 
 接着通过查看数据集对属性做进一步筛选,选取感兴趣数据集;
-`mt_get_ID`函数自动检索传入的属性,并将结果处理成长表格。
+`mi_get_ID`函数自动检索传入的属性,并将结果处理成长表格。
 
 ```{r}
 
-attributes = mt_get_ID_attr(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
+attributes = mi_get_ID_attr(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
 flt_attri = attributes %>% slice(1,3,5,7)
-data_ID = mt_get_ID(flt_attri,biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
+data_ID = mi_get_ID(flt_attri,biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
 ```
 
 #### 数据处理
 
 有时得到的数据是一个ID映射表，每行对应一个ID
-entity,每列对应不同的数据库，这时要进行训练就需要重组表格,同时删去无效值;使用`mt_clean_data`函数来
+entity,每列对应不同的数据库，这时要进行训练就需要重组表格,同时删去无效值;使用`mi_clean_data`函数来
 完成。例如:
 
 ```{r}
@@ -79,14 +82,14 @@ data <- tibble::tibble(
 	'ensembl_exon_id' = c("ENSE00002398851","ENSE00002398851","ENSE00002398851","ENSE00002398851"),
 	'refseq_peptide' = c("NP_001303256","-","NP_001382772","NP_001340728")
 )
-data_ID = mt_clean_data(data,placeholder="-")
+data_ID = mi_clean_data(data,placeholder="-")
 ```
 
 与其他数据不同，ID的特征是组成的字符的位置,仅"ID"一列无法进行训练，故将其分割成单字符向量以获取特征，同时将向量用"\*"补长到最大ID的长度，保证数据维度一致。
 
 ```{r}
-pad_len = mt_get_padlen(data_ID)
-data_splt = mt_split_col(data_ID,cores = NULL,pad_len = pad_len)
+pad_len = mi_get_padlen(data_ID)
+data_splt = mi_split_col(data_ID,cores = NULL,pad_len = pad_len)
 str(data_splt)
 ```
 
@@ -113,7 +116,7 @@ data_blcd = balance_data(data_ID,ratio = 0.3,parallel = F)
 `row_num`参数决定了要使用的数据条数，若数据较大则抽取一部分进行测试，否则全部用于测试。这一步需要用原始数据集而非平衡后数据集;
 
 ```{r echo=FALSE, message=FALSE, hide=TRUE}
-result <- mt_run_bmr(data_fct, row_num = 4000)
+result <- mi_run_bmr(data_fct, row_num = 4000)
 benchmark <- result[1]
 score <- result[2] %>% as.data.table() %T>% print()
 ```
@@ -124,11 +127,11 @@ score <- result[2] %>% as.data.table() %T>% print()
 train = data_blcd[[1]]
 test = data_blcd[[2]]
 #决策树
-result_rg <- mt_train_rg(train, test, measure = msr("classif.acc"))
+result_rg <- mi_train_rg(train, test, measure = msr("classif.acc"))
 #随机森林
-result_rp <- mt_train_rp(train, test, measure = msr("classif.acc"))
+result_rp <- mi_train_rp(train, test, measure = msr("classif.acc"))
 #xgboost
-result_xgboost <- mt_train_xgb(train, test, measure = msr("classif.acc"))
+result_xgboost <- mi_train_xgb(train, test, measure = msr("classif.acc"))
 ```
 
 #### 神经网络模型:
@@ -144,25 +147,25 @@ tensorflow::install_tensorflow()
 参数的意义分别为(1)train,训练集;(2)test,测试集;(3)path2save,存储训练后模型的路径,默认为NULL,不保存;(4)batch_size,训练时的批次大小,越大训练单期时间越短,但达到相同精度的期数增大;(5)epochs,训练的期数,所有样本训练一次为一期;(6)validation_split,训练集中被用于划分为验证集的数据集的比例;
 
 ```{R}
-result_net <- mt_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
+result_net <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
 ```
 
 ### 混淆矩阵:
 
 `cnfs_matri`
 函数将模型训练得到的结果转化为混淆矩阵;直接以模型训练的函数得到的结果作为输入;`ifnet`参数为logical值,为TRUE时表示为神经网络模型;
-`mt_plot_heatmap`则为混淆矩阵绘制热图;name,模型名,文件存储时后缀;filepath,模型存储时路径。
+`mi_plot_heatmap`则为混淆矩阵绘制热图;name,模型名,文件存储时后缀;filepath,模型存储时路径。
 
 ```{r}
 
 
-matri_rg <- mt_get_confusion(result_rg)
-matri_rp <- mt_get_confusion(result_rp)
-matri_xgb <- mt_get_confusion(result_xgb)
-matri_net <- mt_get_confusion(result_net,ifnet = T)
+matri_rg <- mi_get_confusion(result_rg)
+matri_rp <- mi_get_confusion(result_rp)
+matri_xgb <- mi_get_confusion(result_xgb)
+matri_net <- mi_get_confusion(result_net,ifnet = T)
 
-mt_plot_heatmap(matri_rg, name="rg",filepath = "Graph/")
-mt_plot_heatmap(matri_rp, name="rp",filepath = "Graph/")
-mt_plot_heatmap(matri_xgb, name="xgb",filepath = "Graph/")
-mt_plot_heatmap(matri_net, name="xgb",filepath = "Graph/")
+mi_plot_heatmap(matri_rg, name="rg",filepath = "Graph/")
+mi_plot_heatmap(matri_rp, name="rp",filepath = "Graph/")
+mi_plot_heatmap(matri_xgb, name="xgb",filepath = "Graph/")
+mi_plot_heatmap(matri_net, name="xgb",filepath = "Graph/")
 ```

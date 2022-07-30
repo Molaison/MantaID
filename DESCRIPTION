@@ -29,5 +29,5 @@ Imports:
     stringr,
     tibble, 
     tidyr, 
-    tidyselect
+    tidyselect,mlr3tuning,paradox
 LazyData: true
