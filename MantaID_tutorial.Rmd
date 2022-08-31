@@ -29,28 +29,28 @@ knitr::opts_chunk$set(time_it = TRUE)
 #### Packages installation:
 
 ```{r}
-require("BiocManager")
-require("githubinstall")
-packages <- c("biomartr", "biomaRt", "tidyverse", "magrittr", "data.table", "magrittr", "mlr3verse", "skimr", "roxygen2", "tidyverse", "parallel", "scutr", "reshape2", "RColorBrewer", "caret", "tensorflow", "keras", "reticulate", "skimr", "tfdatasets")
-for (pac in packages) {
-  tryCatch({
-  	if(!require((pac))){install.packages(pac,repos = "https://cloud.r-project.org")}},warning = function(){
-    tryCatch({
-      if(!require(pac)){BiocManager::install(pac,update	=F)}
-    },warning = function(){
-      tryCatch({
-        sprintf("Please verify whether package %s exists,if not then type 0 to pass.")
-        if(!require(pac)){githubinstall::githubinstall(pac,ask = F)}
-      },error = function(e)e)
-    },error = function(e)e)
-  },error = function(e)e)
-}
-if(!require(IDentifyEngine)){
-	devtools::install_bitbucket("Molaison/MantaID")
-}
-for(pac in packages){
-	library(pac,character.only = TRUE)
-}
+# require("BiocManager")
+# require("githubinstall")
+# packages <- c("biomartr", "biomaRt", "tidyverse", "magrittr", "data.table", "magrittr", "mlr3verse", "skimr", "roxygen2", "tidyverse", "parallel", "scutr", "reshape2", "RColorBrewer", "caret", "tensorflow", "keras", "reticulate", "skimr", "tfdatasets")
+# for (pac in packages) {
+#   tryCatch({
+#   	if(!require((pac))){install.packages(pac,repos = "https://cloud.r-project.org")}},warning = function(){
+#     tryCatch({
+#       if(!require(pac)){BiocManager::install(pac,update	=F)}
+#     },warning = function(){
+#       tryCatch({
+#         sprintf("Please verify whether package %s exists,if not then type 0 to pass.")
+#         if(!require(pac)){githubinstall::githubinstall(pac,ask = F)}
+#       },error = function(e)e)
+#     },error = function(e)e)
+#   },error = function(e)e)
+# }
+# if(!require(IDentifyEngine)){
+# 	devtools::install_bitbucket("Molaison/MantaID")
+# }
+# for(pac in packages){
+# 	library(pac,character.only = TRUE)
+# }
 library(IDentifyEngine)
 ```
 
@@ -63,10 +63,10 @@ Then filter the attributes further by looking at the dataset to select the datas
 The 'mi_get_ID' function automatically retrieves the incoming attributes and processes the results into a long table.
 
 ```{r}
-
 attributes = mi_get_ID_attr(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
 flt_attri = attributes %>% slice(1,3,5,7)
 data_ID = mi_get_ID(flt_attri,biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
+data_ID
 ```
 
 #### Data Processing:
@@ -154,8 +154,6 @@ function converts the results of model training into an obfuscation matrix; the 
 `mi_plot_heatmap` plots the heatmap for the confusion matrix; name, the model name, the suffix when the file is stored; filepath, the path when the model is stored.
 
 ```{r}
-
-
 matri_rg <- mi_get_confusion(result_rg)
 matri_rp <- mi_get_confusion(result_rp)
 matri_xgb <- mi_get_confusion(result_xgb)
