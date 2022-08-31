@@ -8,6 +8,7 @@
 #' @importFrom dplyr mutate group_by ungroup across na_if
 #' @importFrom ggplot2 coord_equal ggplot aes geom_text geom_tile theme_bw coord_equal scale_fill_gradient2 labs theme element_text ggsave
 #' @importFrom stringr str_c
+#' @importFrom RColorBrewer brewer.pal
 #' @return A `ggplot` object.
 #' @export
 mi_plot_heatmap <- function(table,name = NULL, filepath = NULL) {
@@ -24,24 +25,25 @@ mi_plot_heatmap <- function(table,name = NULL, filepath = NULL) {
     theme_bw() +
     coord_equal() +
     # scale_fill_gradient2(low="#003366", high="#990033",mid = "white") +
-    scale_fill_gradient2(name = NULL, high = "#ED000099", mid = "white") +
-    labs(title = "Confusion Matrix") +
+    #scale_fill_gradient2(name = NULL, high = "#ED000099", mid = "white") +
+    scale_fill_gradientn(colors = c("#ffffff",brewer.pal(5, "YlOrRd")),values = c(0,4e-04,4e-03,4e-02,0.2,1))+
     theme(
-      axis.text.x = element_text(
-        angle = 45,
-        vjust = 1, size = 10, hjust = 1,
-        lineheight = 10
-      ),
-      axis.text.y = element_text(size = 10),
-      strip.text.y = element_text(
-        angle = 0,
-        vjust = 0.5,
-        hjust = 0.5,
-        size = 10
-      )
-    )
+    axis.text.x = element_text(
+      angle = 45,
+      vjust = 1, size = 20, hjust = 1,
+      lineheight = 10
+    ),
+    axis.text.y = element_text(size = 20),
+    strip.text.y = element_text(
+      angle = 0,
+      vjust = 0.5,
+      hjust = 0.5,
+      size = 10
+    ),
+    axis.title = element_text(size = 40)
+  )
   if (!is.null(filepath)) {
-    ggsave(str_c(filepath, "heatmap_", name, ".png"), width = 12.37, height = 10, plot = heat, device = "png", dpi = 600)
+    ggsave(str_c(filepath, "heatmap_", name, ".png"), width = 22.37, height = 20, plot = heat, device = "png", dpi = 600)
   }
   return(heat)
 }

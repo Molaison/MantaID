@@ -96,7 +96,7 @@ str(data_splt)
 当前特征列为字符串类型，尚无法用于训练,故需要将其转化为因子类型。同时由于不同特征列字符出现顺序不同，需要统一因子水平，故需要设置levels参数。接着即可直接当作数值型使用，但考虑到兼容问题,还会将其转化为数值型。
 
 ```{r}
-data_fct = to_factor(data_splt,levels = c("*", 0:9, letters, LETTERS, "_", ".", "-", " ", "/", "\\", ":"))
+data_fct = mi_to_numer(data_splt,levels = c("*", 0:9, letters, LETTERS, "_", ".", "-", " ", "/", "\\", ":"))
 ```
 
 ### 数据平衡:
@@ -104,7 +104,7 @@ data_fct = to_factor(data_splt,levels = c("*", 0:9, letters, LETTERS, "_", ".", 
 根据数据库的大小与重要性不同，检索到的ID数量差距会惊人的大,故需要对数据进行平衡，否则训练得到的模型丧失对ID数量小的数据库的分辨能力;一方面使用smote方法对ID数量少的数据库进行过采样，增加数据密度，另一方面通过随机采样对ID数量多的数据库进行欠采样，减少数量;通过平衡得到的数据集无法再作为测试集，故从原来数据集中划分出`ratio`比例的数据作为测试集，并将这部分数据从平衡后数据集中去除，剩余部分作为训练集;但是需要注意的是，`parallel`参数仅对Mac可用。
 
 ```{r}
-data_blcd = balance_data(data_ID,ratio = 0.3,parallel = F)
+data_blcd = mi_balance_data(data_fct,ratio = 0.3,parallel = F)
 ```
 
 #### 模型训练(决策树+随机森林+xgboost):

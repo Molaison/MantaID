@@ -3,13 +3,17 @@
 #' @param measure Model evaluation method.Use `mlr_measures` and `msr()` to view and choose metrics.
 #' @param train A dataframe.
 #' @param test A dataframe.
+#' @param instance A tuner.
 #' @importFrom data.table as.data.table
 #' @importFrom mlr3 as_task_classif lrn  set_threads msr partition
 #' @export
-mi_train_rp <- function(train, test, measure = msr("classif.acc")) {
+mi_train_rp <- function(train, test, measure = msr("classif.acc"),instance = NULL) {
   learner <- lrn("classif.rpart", keep_model = TRUE,xval=0, cp=0.0005253, maxdepth=24,
                  minsplit=4, maxcompete=3)
   # 保存模型,设置class为目标列
+  if(!is.null(instance)){
+    learner$param_set$values = instance$result_learner_param_vals
+  }
   task_train <- train %>%
     as.data.table() %>%
     as_task_classif(target = "class", feature = -c("class"))
