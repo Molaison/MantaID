@@ -21,17 +21,11 @@ mi_train_rg <- function(train, test, measure = msr("classif.acc"),instance = NUL
   task_predict <- test %>%
     as.data.table() %>%
     as_task_classif(target = "class", feature = -c("class"))
-  # 按比例划分为训练集与测试集
   train_set <- partition(task_train, ratio = 1)$train
   test_set <- partition(task_predict, ratio = 0)$test
-  # 设置多线程运算
   set_threads(learner)
-  # 模型训练
   learner$train(task_train, row_ids = train_set)
-  # 测试集预测
   predict <- learner$predict(task_predict, row_ids = test_set)
-  # 结果评估
   print(predict$score(measure))
-  # 储存模型
   list(learner, predict)
 }

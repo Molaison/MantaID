@@ -18,24 +18,24 @@
 #' mi_balance_data(data)
 mi_balance_data <- function(data, ratio = 0.3, parallel = F) {
   system.time({
-    # 多分类数据平衡,欠采样样本采用随机采样,过采样部分采用smote方法采样,获得相对平衡的数据;
+    # The multicategorical data were balanced by random sampling of the undersampled samples and the oversampling part was sampled by the smote method to obtain relatively balanced data;
     if(parallel){
       data_smtd <- SCUT_parallel(data, "class", oversample = oversample_smote, undersample = resample_random)
     }else{
       data_smtd <- SCUT(data, "class", oversample = oversample_smote, undersample = resample_random)
     }
   })
-  #差分平衡后数据集与平衡前数据集,作为训练集
+  #Difference between the balanced data set and the pre-balanced data set, as the training set
   train_new <- setdiff(data_smtd, data)
   print(train_new %>% nrow())
   task <- data %>%
     as.data.table() %>%
     as_task_classif(target = "class", feature = -"class")
-  # 原数据集中分离出一部分同样作为训练集
+  # A portion of the original data set is also used as the training set
   train_raw <-partition(task, ratio = 1-ratio)$train %>% slice(data, .)
-  #训练集数据是原来数据集的拆分加上采样获得的新样本
+  #a split of the original data set plus a new sample obtained by sampling as the training set
   train <- bind_rows(train_raw, train_new)
-  # 测试集数据来自原来数据集的拆分
+  # Test set data from a split of the original data set
   test <-partition(task, ratio = 1-ratio)$test %>% slice(data, .)
 
   return(list(train, test))

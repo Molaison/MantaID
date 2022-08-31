@@ -13,9 +13,8 @@
 #' data(mi_data_rawID)
 #' mi_split_col(mi_data_rawID,cores = 1,pad_len = 10)
 mi_split_col <- function(data, cores = NULL, pad_len = 10) {
-  # 2.计算计算机内核数
+
   core_max <- detectCores(logical = FALSE)%/%2
-  # 3.打开并行计算
   if (is.null(cores)) {
     cl <- makeCluster(core_max)
   } else {
@@ -29,12 +28,9 @@ mi_split_col <- function(data, cores = NULL, pad_len = 10) {
       c(., rep("*", ifelse((pad_len - length(.)) > 0, pad_len - length(.), 0))) %>%
       .[1:pad_len]
   }
-  # 4.给每个单独内核传递变量,函数等
   clusterExport(cl, varlist = c("pad_len", "mi_split_str"), envir = environment())
   clusterEvalQ(cl, c(library(data.table), library(magrittr), library(stringr),library(dplyr)))
-  # 5.开始并行计算（用法与sapply类似）
   output <- parSapply(cl, data[, 1][[1]], mi_split_str, pad_len)
-  # 6.关闭并行计算
   stopCluster(cl)
   output %>%
     unlist() %>%

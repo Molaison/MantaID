@@ -13,10 +13,7 @@ mi_get_ID_attr <- function(biomart = "genes", dataset = "hsapiens_gene_ensembl",
   # 使用asia mirror获取hsapiens_gene_ensembl数据库
   ensemb_hm_dset <- useEnsembl(biomart = biomart, dataset = dataset, mirror = mirror, verbose = TRUE)
   attributes <- listAttributes(ensemb_hm_dset) %>%
-    # 筛选可能包含ID的属性
     filter(grepl(.[["description"]], pattern = "(id)|(name)", ignore.case = TRUE)) %>%
-    # 去除一些不需要的属性
     filter(!grepl(.[["description"]], pattern = "(end)|(start)|(description)|(probe)|(version)|(content)|(Aberrant)|(Source)|(Strain)|(Chromosome)", ignore.case = TRUE)) %>%
-    # 名字过长的属性往往不是id,而是基因的位置等信息对应的索引等
     filter(str_length(.[["name"]]) < 18)
 }

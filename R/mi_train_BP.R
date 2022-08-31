@@ -57,12 +57,9 @@ mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size
     epochs = epochs, batch_size = batch_size,
     validation_split = 0.3, verbose = 2
   )
-  # save_model_tf(model, "result_net_usmld")
   if(!is.null(path2save)){
     save_model_tf(model, str_c(path2save, "/result_net"))
   }
-
-  # model <- load_model_tf("DeepLearning_Model/result_net/")
   predictions <- predict(model, test_set)
   response <- predictions %>% k_argmax()
   response <- response$numpy() %>%

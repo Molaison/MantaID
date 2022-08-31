@@ -14,18 +14,12 @@
 mi_plot_heatmap <- function(table,name = NULL, filepath = NULL) {
   melted <- table %>%
     as.table() %>%
-    melt() #%>%
-    # group_by(.data[['Reference']]) %>%
-    # mutate(across(.cols = .data[['value']], .fns = ~ .x / sum(.x))) %>%
-    # ungroup()
-
+    melt()
   heat <- ggplot(melted, aes(x = .data[['Reference']], y =.data[['Prediction']], fill = .data[['value']])) +
     geom_tile() +
     geom_text(aes(label = na_if(round(.data[['value']], 2), 0)), color = "#00468B99", size = 2) +
     theme_bw() +
     coord_equal() +
-    # scale_fill_gradient2(low="#003366", high="#990033",mid = "white") +
-    #scale_fill_gradient2(name = NULL, high = "#ED000099", mid = "white") +
     scale_fill_gradientn(colors = c("#ffffff",brewer.pal(5, "YlOrRd")),values = c(0,4e-04,4e-03,4e-02,0.2,1))+
     theme(
     axis.text.x = element_text(
