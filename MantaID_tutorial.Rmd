@@ -1,0 +1,168 @@
+---
+title: MantaID:a machine-learning based tool to automate the identification of biological database IDs
+author: Zeng Zhengpeng
+date: 2022/5/1
+output: rmdformats::material
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r global-options, include=FALSE}
+knitr::knit_hooks$set(time_it = local({
+  now <- NULL
+  function(before, options) {
+    if (before) {
+      # record the current time before each chunk
+      now <<- Sys.time()
+    } else {
+      # calculate the time difference after a chunk
+      res <- difftime(Sys.time(), now)
+      # return a character string to show the time
+      paste("Time for this code chunk to run:", res)
+    }
+  }
+}))
+knitr::opts_chunk$set(time_it = TRUE)
+```
+
+#### Packages installation:
+
+```{r}
+require("BiocManager")
+require("githubinstall")
+packages <- c("biomartr", "biomaRt", "tidyverse", "magrittr", "data.table", "magrittr", "mlr3verse", "skimr", "roxygen2", "tidyverse", "parallel", "scutr", "reshape2", "RColorBrewer", "caret", "tensorflow", "keras", "reticulate", "skimr", "tfdatasets")
+for (pac in packages) {
+  tryCatch({
+  	if(!require((pac))){install.packages(pac,repos = "https://cloud.r-project.org")}},warning = function(){
+    tryCatch({
+      if(!require(pac)){BiocManager::install(pac,update	=F)}
+    },warning = function(){
+      tryCatch({
+        sprintf("Please verify whether package %s exists,if not then type 0 to pass.")
+        if(!require(pac)){githubinstall::githubinstall(pac,ask = F)}
+      },error = function(e)e)
+    },error = function(e)e)
+  },error = function(e)e)
+}
+if(!require(IDentifyEngine)){
+	devtools::install_bitbucket("Molaison/MantaID")
+}
+for(pac in packages){
+	library(pac,character.only = TRUE)
+}
+library(IDentifyEngine)
+```
+
+#### Data Acquisition:
+biomaRt provides an interface to R and the BioMart software suite databases (e.g. `Ensembl`, `Uniprot`, `HapMap`), allowing direct access to information in the databases via R.
+
+Set the `BioMart` dataset to be connected to via `biomart`, `dataset`, here choose to use the human genome dataset, Mirror choose: `asia mirror` (depending on the region); use `mi_get_ID_attr` to get the attributes of the dataset associated with the ID;
+
+Then filter the attributes further by looking at the dataset to select the dataset of interest;
+The 'mi_get_ID' function automatically retrieves the incoming attributes and processes the results into a long table.
+
+```{r}
+
+attributes = mi_get_ID_attr(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
+flt_attri = attributes %>% slice(1,3,5,7)
+data_ID = mi_get_ID(flt_attri,biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
+```
+
+#### Data Processing:
+
+Sometimes the data obtained is an ID mapping table, with each row corresponding to an ID
+entity, and each column corresponds to a different database, so to do the training you need to reorganise the table and remove invalid values; use the `mi_clean_data` function to
+to do this. For example:
+
+```{r}
+data <- tibble::tibble(
+	"ensembl_gene_id" = c("ENSG00000001626","ENSG00000002549","ENSG00000002586","ENSG00000002745"),
+	'ensembl_exon_id' = c("ENSE00002398851","ENSE00002398851","ENSE00002398851","ENSE00002398851"),
+	'refseq_peptide' = c("NP_001303256","-","NP_001382772","NP_001340728")
+)
+data_ID = mi_clean_data(data,placeholder="-")
+```
+
+Unlike other data, the features of ID are the positions of the constituent characters, and it is not possible to train only one column of "ID", so it is split into a single character vector to obtain the features, and the vector is filled with "\*" to the length of the maximum ID to ensure consistent data dimension.
+
+```{r}
+pad_len = mi_get_padlen(data_ID)
+data_splt = mi_split_col(data_ID,cores = NULL,pad_len = pad_len)
+str(data_splt)
+```
+
+The current feature columns are strings, which cannot be used for training yet, so they need to be converted to factor types. The levels parameter needs to be set as the order of appearance of the characters in the different feature columns is different and the factor levels need to be standardised. This can then be used directly as a numeric type, but for compatibility reasons, it will also be converted to a numeric type.
+
+```{r}
+data_fct = mi_to_numer(data_splt,levels = c("*", 0:9, letters, LETTERS, "_", ".", "-", " ", "/", "\\", ":"))
+```
+
+### Data Balancing:
+
+Depending on the size and importance of the database, the difference in the number of IDs retrieved can be surprisingly large, so it is necessary to balance the data, otherwise the trained model loses its ability to discriminate between databases with small numbers of IDs; on the one hand, the smote method is used to oversample databases with small numbers of IDs to increase the data density, and on the other hand, databases with large numbers of IDs are undersampled through random sampling to reduce the number. The data set obtained by balancing can no longer be used as the test set, so the `ratio` proportion of data from the original data set is divided as the test set, and this part of the data is removed from the balanced data set, and the remaining part is used as the training set; however, it should be noted that the `parallel` parameter is only available for Mac.
+
+```{r}
+data_blcd = mi_balance_data(data_fct,ratio = 0.3,parallel = F)
+```
+
+#### Model Training:
+
+Due to the large size of the dataset, the model training time is too long, so only a certain number of samples are taken for training; where the training set and the dataset are divided by calling the `partition` function, which exists as an index of the original data; three models are used for benchmark training, namely decision tree, random forest and plain Bayes, and resampling is performed using the five-fold crossover method; `benchmark()` The training was performed, and the training and test sets were evaluated separately after training (costs&ce);
+accepts four parameters, all of which have default parameters except data; `data` is the incoming data, where the target column (i.e. the column where the ID database name is located) must have the column name `"class"`, and all columns are of type factor;
+
+The first thing that needs to be done is the initial selection of a machine learning classification model, where multiple models are trained and the most suitable ones are selected;
+The `row_num` parameter determines the number of data items to be used, if the data is large then a portion of the data will be extracted for testing, otherwise all of the data will be used for testing. This step requires the use of the original dataset rather than the balanced dataset;
+
+```{r echo=FALSE, message=FALSE, hide=TRUE}
+result <- mi_run_bmr(data_fct, row_num = 4000)
+benchmark <- result[1]
+score <- result[2] %>% as.data.table() %T>% print()
+```
+
+The results were used to determine the choice of models for decision trees, random forests, and XGBoost.
+
+```{r}
+train = data_blcd[[1]]
+test = data_blcd[[2]]
+#Decision Tree
+result_rg <- mi_train_rg(train, test, measure = msr("classif.acc"))
+#Random Forest
+result_rp <- mi_train_rp(train, test, measure = msr("classif.acc"))
+#Xboost
+result_xgboost <- mi_train_xgb(train, test, measure = msr("classif.acc"))
+```
+
+In addition to several classical machine learning algorithms, a BP neural network is used for classification.
+
+This is achieved by calling `tensorflow` via the `keras` package, so `tensorflow` needs to be installed first.
+
+```{r}
+tensorflow::install_tensorflow()
+```
+
+The meaning of the parameters are (1) train, the training set; (2) test, the test set; (3) path2save, the path of the trained model, the default is NULL, not saved; (4) batch_size, the size of the training batch, the larger the training period, the shorter the training period, but the number of periods to achieve the same accuracy increases; (5) epochs, the number of training (5) epochs, the number of training periods, all samples are trained once; (6) validation_split, the proportion of data sets in the training set that are used to divide into validation sets;
+
+```{R}
+result_net <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
+```
+
+### Confusion matrix :
+
+`cnfs_matri`
+function converts the results of model training into an obfuscation matrix; the results of the model training function are used directly as input; the `ifnet` argument is a logical value, TRUE for a neural network model;
+`mi_plot_heatmap` plots the heatmap for the confusion matrix; name, the model name, the suffix when the file is stored; filepath, the path when the model is stored.
+
+```{r}
+
+
+matri_rg <- mi_get_confusion(result_rg)
+matri_rp <- mi_get_confusion(result_rp)
+matri_xgb <- mi_get_confusion(result_xgb)
+matri_net <- mi_get_confusion(result_net,ifnet = T)
+
+mi_plot_heatmap(matri_rg, name="rg",filepath = "Graph/")
+mi_plot_heatmap(matri_rp, name="rp",filepath = "Graph/")
+mi_plot_heatmap(matri_xgb, name="xgb",filepath = "Graph/")
+mi_plot_heatmap(matri_net, name="xgb",filepath = "Graph/")
+```
