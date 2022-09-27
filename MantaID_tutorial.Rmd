@@ -46,7 +46,7 @@ knitr::opts_chunk$set(time_it = TRUE)
 #   },error = function(e)e)
 # }
 # if(!require(IDentifyEngine)){
-# 	devtools::install_bitbucket("Molaison/MantaID")
+	devtools::install_bitbucket("Molaison/MantaID")
 # }
 # for(pac in packages){
 # 	library(pac,character.only = TRUE)
