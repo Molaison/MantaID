@@ -1,4 +1,4 @@
-MantaID: a machine-learning based tool to automate the identification of biological database IDs
+MantaID: a machine-learning based tool to automate the identification of biological database IDs. A shiny application are also provided and can be accessed through [MantaID (shinyapps.io)](https://molaison.shinyapps.io/MantaID/).
 
 ====================
 
