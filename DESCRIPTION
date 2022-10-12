@@ -1,5 +1,5 @@
-Package: IDentifyEngine
-Title: ID identification Engine
+Package: MantaID
+Title: ID Identification Engine
 Version: 0.0.0.9000
 Authors@R: 
     person("Zeng", "Zhengpeng",
@@ -29,5 +29,5 @@ Imports:
     stringr,
     tibble, 
     tidyr, 
-    tidyselect,mlr3tuning,paradox
+    tidyselect,mlr3tuning,paradox,RColorBrewer,ggcorrplot
 LazyData: true
