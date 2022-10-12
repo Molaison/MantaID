@@ -4,7 +4,7 @@
 \alias{mi_train_rp}
 \title{Classification tree model training.}
 \usage{
-mi_train_rp(train, test, measure = msr("classif.acc"))
+mi_train_rp(train, test, measure = msr("classif.acc"), instance = NULL)
 }
 \arguments{
 \item{train}{A dataframe.}
@@ -12,6 +12,8 @@ mi_train_rp(train, test, measure = msr("classif.acc"))
 \item{test}{A dataframe.}
 
 \item{measure}{Model evaluation method.Use \code{mlr_measures} and \code{msr()} to view and choose metrics.}
+
+\item{instance}{A tuner.}
 }
 \description{
 Classification tree model training.

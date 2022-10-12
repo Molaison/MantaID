@@ -1,3 +1,15 @@
+#' Plot correlation heatmap.
+#'
+#' @param data Data frame that including IDs' position features.
+#' @param cls The name of the class column.
+#'
+#' @importFrom stats cor
+#' @importFrom grid unit
+#' @importFrom ggplot2 ggtitle unit xlab ylab
+#' @importFrom ggcorrplot ggcorrplot
+#' @return A heatmap.
+#' @export
+#'
 mi_plot_cor <- function(data, cls = "class") {
     cor_mt <- data %>% select({{cls}})%>% as.matrix()%>%cor()
     heat <- ggcorrplot(cor_mt, show.diag = T) +

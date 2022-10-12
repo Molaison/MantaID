@@ -12,10 +12,6 @@
 #' @importFrom magrittr %>%
 #' @return A `tibble` dataframe.
 #' @export
-#'
-#' @examples
-#' data(mi_data_attributes)
-#' mi_get_ID(mi_data_attributes[1:3, ])
 mi_get_ID <- function(attributes, biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia") {
     Ensembl <- useEnsembl(biomart = biomart, dataset = dataset, mirror = mirror, verbose = TRUE)
   out <- vector("list", length = nrow(attributes))

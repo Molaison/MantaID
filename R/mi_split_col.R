@@ -9,9 +9,6 @@
 #' @importFrom magrittr %>%
 #' @return A tibble with pad_len+1 column.
 #' @export
-#' @examples
-#' data(mi_data_rawID)
-#' mi_split_col(mi_data_rawID,cores = 1,pad_len = 10)
 mi_split_col <- function(data, cores = NULL, pad_len = 10) {
 
   core_max <- detectCores(logical = FALSE)%/%2

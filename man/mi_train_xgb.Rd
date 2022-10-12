@@ -4,7 +4,7 @@
 \alias{mi_train_xgb}
 \title{Xgboost model training}
 \usage{
-mi_train_xgb(train, test, measure = msr("classif.acc"))
+mi_train_xgb(train, test, measure = msr("classif.acc"), instance = NULL)
 }
 \arguments{
 \item{train}{A dataframe.}
@@ -12,6 +12,8 @@ mi_train_xgb(train, test, measure = msr("classif.acc"))
 \item{test}{A dataframe.}
 
 \item{measure}{Model evaluation method.}
+
+\item{instance}{A tuner.}
 }
 \description{
 Xgboost model training
