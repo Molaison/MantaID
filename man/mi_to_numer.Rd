@@ -17,8 +17,3 @@ mi_to_numer(
 \description{
 Convert data to numeric, and for ID column convert with fixed levels.
 }
-\examples{
-data(mi_data_rawID)
-str(mi_split_col(mi_data_rawID,cores = 1,pad_len = 10))
-str(mi_to_numer(mi_split_col(mi_data_rawID,cores = 1,pad_len = 10)))
-}

@@ -26,7 +26,3 @@ A \code{tibble} dataframe.
 \description{
 Get ID data from \code{Biomart} database use \code{attributes}.
 }
-\examples{
-data(mi_data_attributes)
-mi_get_ID(mi_data_attributes[1:3, ])
-}

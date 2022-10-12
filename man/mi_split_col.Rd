@@ -19,7 +19,3 @@ A tibble with pad_len+1 column.
 \description{
 Cut the string of ID column character by character and divide it into multiple columns.
 }
-\examples{
-data(mi_data_rawID)
-mi_split_col(mi_data_rawID,cores = 1,pad_len = 10)
-}

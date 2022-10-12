@@ -6,7 +6,7 @@
 #'
 #' @importFrom reshape2 melt
 #' @importFrom dplyr mutate group_by ungroup across na_if
-#' @importFrom ggplot2 coord_equal ggplot aes geom_text geom_tile theme_bw coord_equal scale_fill_gradient2 labs theme element_text ggsave
+#' @importFrom ggplot2 coord_equal ggplot aes geom_text geom_tile theme_bw coord_equal scale_fill_gradient2 labs theme element_text ggsave scale_fill_gradientn
 #' @importFrom stringr str_c
 #' @importFrom RColorBrewer brewer.pal
 #' @return A `ggplot` object.

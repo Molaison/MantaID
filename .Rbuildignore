@@ -6,3 +6,5 @@
 ^Rdata\.RData$
 ^LICENSE\.md$
 ^renv$
+readme.md
+MantaID_tutorial.Rmd
