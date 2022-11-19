@@ -9,7 +9,7 @@ mi(
   cores = NULL,
   levels = c("*", 0:9, letters, LETTERS, "_", ".", "-", " ", "/", "\\\\", ":"),
   ratio = 0.3,
-  para_blc = F,
+  para_blc = FALSE,
   model_path = NULL,
   batch_size = 128,
   epochs = 64,

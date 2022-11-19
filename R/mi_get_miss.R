@@ -11,6 +11,5 @@ mi_get_miss <- function(predict) {
     as.data.table() %>%
     filter("truth" != "response") %>%
     group_by("truth") %>%
-    count() %T>%
-    print()
+    count()
 }

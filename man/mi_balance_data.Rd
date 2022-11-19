@@ -5,7 +5,7 @@
 \title{Data balance.
 Most classes adopt random undersampling, while a few classes adopt smote method to oversample to obtain relatively balanced data;}
 \usage{
-mi_balance_data(data, ratio = 0.3, parallel = F)
+mi_balance_data(data, ratio = 0.3, parallel = FALSE)
 }
 \arguments{
 \item{data}{A data frame. Except class column, all are numeric types.}

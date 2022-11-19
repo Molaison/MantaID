@@ -8,8 +8,7 @@
 #' @importFrom caret confusionMatrix
 #' @return A `confusionMatrix` object.
 #' @export
-#'
-mi_get_confusion <- function(result_list, ifnet = F) {
+mi_get_confusion <- function(result_list, ifnet = FALSE) {
   if (ifnet) {
     return(result_list[[2]])
   }

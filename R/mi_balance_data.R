@@ -16,7 +16,7 @@
 #' library(dplyr)
 #' data = rename(iris,class =Species)
 #' mi_balance_data(data)
-mi_balance_data <- function(data, ratio = 0.3, parallel = F) {
+mi_balance_data <- function(data, ratio = 0.3, parallel = FALSE) {
   system.time({
     # The multicategorical data were balanced by random sampling of the undersampled samples and the oversampling part was sampled by the smote method to obtain relatively balanced data;
     if(parallel){
@@ -27,7 +27,6 @@ mi_balance_data <- function(data, ratio = 0.3, parallel = F) {
   })
   #Difference between the balanced data set and the pre-balanced data set, as the training set
   train_new <- setdiff(data_smtd, data)
-  print(train_new %>% nrow())
   task <- data %>%
     as.data.table() %>%
     as_task_classif(target = "class", feature = -"class")

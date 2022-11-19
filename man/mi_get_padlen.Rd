@@ -15,3 +15,7 @@ A int.
 \description{
 Get max length of ID data.
 }
+\examples{
+data(mi_data_rawID)
+mi_get_padlen(mi_data_rawID)
+}

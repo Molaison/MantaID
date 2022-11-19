@@ -13,12 +13,12 @@
 #'
 #' @return The list of models and graphs.
 #' @export
-mi <- function(mi_data_allID,cores = NULL,levels = c("*", 0:9, letters, LETTERS, "_", ".", "-", " ", "/", "\\", ":"),ratio = 0.3,para_blc = F, model_path = NULL, batch_size = 128, epochs = 64, validation_split = 0.3,graph_path=NULL){
+mi <- function(mi_data_allID,cores = NULL,levels = c("*", 0:9, letters, LETTERS, "_", ".", "-", " ", "/", "\\", ":"),ratio = 0.3,para_blc = FALSE, model_path = NULL, batch_size = 128, epochs = 64, validation_split = 0.3,graph_path=NULL){
     pad_len = mi_get_padlen(mi_data_allID)
     data_split = mi_split_col(mi_data_allID,cores = cores,pad_len = pad_len)
     data_num = mi_to_numer(data_split,levels = c("*", 0:9, letters, LETTERS, "_", ".", "-", " ", "/", "\\", ":"))
     cor_plot = mi_plot_cor(data_num,"class")
-    data_blcd = mi_balance_data(data_num,ratio = 0.3,parallel = F)
+    data_blcd = mi_balance_data(data_num,ratio = 0.3,parallel = FALSE)
     train = data_blcd[[1]]
     test = data_blcd[[2]]
     inst_rg = mi_tune_rg(train,test)
@@ -34,7 +34,7 @@ mi <- function(mi_data_allID,cores = NULL,levels = c("*", 0:9, letters, LETTERS,
     matri_rg <- mi_get_confusion(result_rg)
     matri_rp <- mi_get_confusion(result_rp)
     matri_xgb <- mi_get_confusion(result_xgb)
-    matri_net <- mi_get_confusion(result_net,ifnet = T)
+    matri_net <- mi_get_confusion(result_net,ifnet = TRUE)
     heatmap_rg = mi_plot_heatmap(matri_rg, name="rg",filepath = graph_path)
     heatmap_rp = mi_plot_heatmap(matri_rp, name="rp",filepath = graph_path)
     heatmap_xgb = mi_plot_heatmap(matri_xgb, name="xgb",filepath = graph_path)

@@ -14,6 +14,13 @@ mi_to_numer(
 
 \item{levels}{Characters accommodated in IDs.}
 }
+\value{
+A numeric data frame with numerical or factor type columns.
+}
 \description{
 Convert data to numeric, and for ID column convert with fixed levels.
+}
+\examples{
+data(mi_data_procID)
+mi_to_numer(mi_data_procID)
 }

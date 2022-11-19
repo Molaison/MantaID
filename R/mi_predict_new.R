@@ -5,6 +5,7 @@
 #' @importFrom dplyr rename mutate across select bind_cols
 #' @importFrom tidyselect everything
 #' @importFrom data.table as.data.table
+#' @return A data frame that contains features and 'predict' class.
 #' @export
 mi_predict_new <- function(data, learner) {
   data %>%

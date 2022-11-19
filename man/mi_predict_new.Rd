@@ -11,6 +11,9 @@ mi_predict_new(data, learner)
 
 \item{learner}{A R6 class object.}
 }
+\value{
+A data frame that contains features and 'predict' class.
+}
 \description{
 Predict new data with trained learner.
 }

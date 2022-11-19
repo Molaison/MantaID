@@ -1,5 +1,5 @@
 ---
-title: MantaID:a machine-learning based tool to automate the identification of biological database IDs
+title: 'MantaID':a machine-learning based tool to automate the identification of biological database IDs
 author: Zeng Zhengpeng
 date: 2022/5/1
 output: rmdformats::material

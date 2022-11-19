@@ -6,6 +6,7 @@
 #' @param instance A tuner.
 #' @importFrom data.table as.data.table
 #' @importFrom mlr3 as_task_classif lrn  set_threads msr partition
+#' @return A list of learner for predict and predict result of test set.
 #' @export
 mi_train_xgb <- function(train, test, measure = msr("classif.acc"),instance = NULL) {
   learner <- lrn("classif.xgboost",nrounds=10, nthread=1, verbose=0, max_depth=8,
@@ -25,6 +26,5 @@ mi_train_xgb <- function(train, test, measure = msr("classif.acc"),instance = NU
   set_threads(learner)
   learner$train(task_train, row_ids = train_set)
   predict <- learner$predict(task_predict, row_ids = test_set)
-  print(predict$score(measure))
   list(learner, predict)
 }

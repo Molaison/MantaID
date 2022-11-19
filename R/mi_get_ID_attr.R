@@ -10,7 +10,6 @@
 #' @return A dataframe.
 #' @export
 mi_get_ID_attr <- function(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia") {
-  # 使用asia mirror获取hsapiens_gene_ensembl数据库
   ensemb_hm_dset <- useEnsembl(biomart = biomart, dataset = dataset, mirror = mirror, verbose = TRUE)
   attributes <- listAttributes(ensemb_hm_dset) %>%
     filter(grepl(.[["description"]], pattern = "(id)|(name)", ignore.case = TRUE)) %>%

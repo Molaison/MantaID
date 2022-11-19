@@ -4,7 +4,7 @@
 \alias{mi_run_bmr}
 \title{Compare classification models with small samples.}
 \usage{
-mi_run_bmr(data, row_num = 4000, resamplings = rsmps("cv", folds = 10))
+mi_run_bmr(data, row_num = 1000, resamplings = rsmps("cv", folds = 10))
 }
 \arguments{
 \item{data}{A tibble.All are numeric except the first column is a factor.}
@@ -13,9 +13,12 @@ mi_run_bmr(data, row_num = 4000, resamplings = rsmps("cv", folds = 10))
 
 \item{resamplings}{R6/Resampling.Resampling method.}
 }
+\value{
+A list of R6 class of benchmark results and scores of test set.
+examples
+data(mi_data_procID)
+mi_run_bmr(mi_data_procID)
+}
 \description{
 Compare classification models with small samples.
-}
-\examples{
-data(mi_data_procID)
 }

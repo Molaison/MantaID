@@ -15,6 +15,9 @@ mi_train_xgb(train, test, measure = msr("classif.acc"), instance = NULL)
 
 \item{instance}{A tuner.}
 }
+\value{
+A list of learner for predict and predict result of test set.
+}
 \description{
 Xgboost model training
 }

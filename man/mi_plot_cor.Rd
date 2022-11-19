@@ -17,3 +17,8 @@ A heatmap.
 \description{
 Plot correlation heatmap.
 }
+\examples{
+data(mi_data_procID)
+data_num <- mi_to_numer(mi_data_procID)
+mi_plot_cor(data_num)
+}

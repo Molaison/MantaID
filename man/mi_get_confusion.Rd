@@ -4,7 +4,7 @@
 \alias{mi_get_confusion}
 \title{Compute the confusion matrix for the predict result.}
 \usage{
-mi_get_confusion(result_list, ifnet = F)
+mi_get_confusion(result_list, ifnet = FALSE)
 }
 \arguments{
 \item{result_list}{A list return from model training functions.}
