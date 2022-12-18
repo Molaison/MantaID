@@ -12,8 +12,13 @@ MantaID: a machine-learning based tool to automate the identification of biologi
 
 ##### Installation:
 
-1. require("devtools")
-2. install_bitbucket("Molaison/MantaID")
+```R
+require("devtools")
+install_bitbucket("Molaison/MantaID")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("biomaRt", version = "3.8")
+```
 
 ##### Descriptions:
 
