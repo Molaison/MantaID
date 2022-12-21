@@ -14,7 +14,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom stats predict
 #' @importFrom stringr str_c
-#' @return A `list` object th at contains the prediction confusion matrix and the `model` object.
+#' @return A `list` object th at contains the prediction confusion matrix, the `model` object, the mapping of predicted number to classes.
 #' @export
 mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3) {
   train <- train %>%
@@ -68,5 +68,5 @@ mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size
     factor(levels = levels(test$class))
   prd_net <- confusionMatrix(response, test$class)
   score <- model %>% evaluate(test_set, test_target)
-  return(list(model, prd_net))
+  return(list(model, prd_net,levels))
 }

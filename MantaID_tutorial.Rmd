@@ -51,7 +51,7 @@ knitr::opts_chunk$set(time_it = TRUE)
 # for(pac in packages){
 # 	library(pac,character.only = TRUE)
 # }
-library(IDentifyEngine)
+library(MantaID)
 ```
 
 #### Data Acquisition:
@@ -149,8 +149,7 @@ result_net <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epoch
 
 ### Confusion matrix :
 
-`cnfs_matri`
-function converts the results of model training into an obfuscation matrix; the results of the model training function are used directly as input; the `ifnet` argument is a logical value, TRUE for a neural network model;
+`cnfs_matri` function converts the results of model training into an obfuscation matrix; the results of the model training function are used directly as input; the `ifnet` argument is a logical value, TRUE for a neural network model;
 `mi_plot_heatmap` plots the heatmap for the confusion matrix; name, the model name, the suffix when the file is stored; filepath, the path when the model is stored.
 
 ```{r}
