@@ -4,10 +4,8 @@
 #' @param col_id The name of ID column.
 #'
 #' @return A dataframe.
-predict_new <- function(data, col_id,result_rg,result_rp,result_xgboost,result_BP,padlen = 30) {
-	library(data.table)
-	library(keras)
-	pre_data <- data %>%
+mi_unify_mod <- function(data, col_id,result_rg,result_rp,result_xgboost,result_BP,c_value = 0.75, pad_len = 30) {
+	data <- data %>%
 		select(col_id, everything()) %>%
 		rename("ID" = col_id) %>%
 		mutate(across(.cols = "ID", .fns = as.character))
@@ -53,10 +51,10 @@ predict_new <- function(data, col_id,result_rg,result_rp,result_xgboost,result_B
 			result = tibble(
 				names = vec,
 				weight = c(
-					final(vec = swap(vec,1),conf_list = swap(conf_list,1)),
-					final(vec = swap(vec,2),conf_list = swap(conf_list,2)),
-					final(vec = swap(vec,3),conf_list = swap(conf_list,3)),
-					final(vec = swap(vec,4),conf_list = swap(conf_list,4))
+					final(vec = swap(vec,1),conf_list = swap(conf_list,1),c = c_value),
+					final(vec = swap(vec,2),conf_list = swap(conf_list,2),c = c_value),
+					final(vec = swap(vec,3),conf_list = swap(conf_list,3),c = c_value),
+					final(vec = swap(vec,4),conf_list = swap(conf_list,4),c = c_value)
 				)
 			)%>% group_by(names) %>% summarise(sum= sum(weight))
 			return(result[[which.max(result$sum),1]])

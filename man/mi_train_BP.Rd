@@ -30,7 +30,7 @@ mi_train_BP(
 \item{validation_split}{Float between 0 and 1. Fraction of the training data to be used as validation data.}
 }
 \value{
-A \code{list} object th at contains the prediction confusion matrix and the \code{model} object.
+A \code{list} object th at contains the prediction confusion matrix, the \code{model} object, the mapping of predicted number to classes.
 }
 \description{
 Train a three layers neural network model.

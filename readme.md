@@ -1,4 +1,4 @@
-MantaID: a machine-learning based tool to automate the identification of biological database IDs. A shiny application is also provided and can be accessed through [MantaID (shinyapps.io)](https://molaison.shinyapps.io/MantaID/).
+MantaID: a machine-learning based tool to automate the identification of biological database IDs. A shiny application is also provided and can be accessed through [MantaID (shinyapps.io)](https://molaison.shinyapps.io/MantaID/) and API through [MantaIDapi](http://164.92.98.237/MantaIDapi/__docs__/).
 
 ====================
 
@@ -25,7 +25,28 @@ BiocManager::install("biomaRt", version = "3.8")
 
 ​	The MantaID package provides a pipeline for gene IDs identification based on R. Via MantaID, users can identify IDs quickly based on integrated machine-learning-based model  on a large scale. The general workflow includes data retrieving, processing and balancing, model tuning, training, and explaining. Each of procedure is implemented with the functions in R sub-fold. 
 
-### User instructions:
+
+### How to use API:
+
+The API was implemented to search for meanins of the ID of interest.
+
+To retrieve the results, you can use the `curl` in the terminal. Please replace the brackets with you own choices. The mode must be either `quick` or `general`.
+
+```bash
+curl -X GET "http://164.92.98.237/MantaIDapi/ID_search?ID={ID of interest}&quick={mode}" -H "accept: */*"
+```
+
+You can also perform it in R with `GET` method. The result can retrieved as a dataframe by running the script below in R.
+
+```R
+install.packages("httr","jsonlite")
+library(httr)
+library(jsonlite)
+res = GET("http://164.92.98.237/MantaIDapi/ID_search?ID={ID of interest}&quick={mode}")
+resultDF <- fromJSON(as.data.frame(fromJSON(rawToChar(res$content)))[1,1])
+```
+
+### MantaID pacakage User instructions:
 
 ```R
 library(MantaID) 
