@@ -28,7 +28,7 @@ BiocManager::install("biomaRt", version = "3.8")
 
 ### How to use API:
 
-The API was implemented to search for meanins of the ID of interest.
+MantaID achieves a more comprehensive approach for a small number of ID identification and can be used with MantaIDAPI. First, we remove the mismatched databases by regular expressions, then visit the corresponding resource page by URL and filter them according to the access status code, and finally retrieve the text of the web page and judge whether it contains the information of non-existent resources, and thus remaining ones are the possible databases. 
 
 To retrieve the results, you can use the `curl` in the terminal. Please replace the brackets with you own choices. The mode must be either `quick` or `general`.
 
