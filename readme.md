@@ -36,7 +36,7 @@ To retrieve the results, you can use the `curl` in the terminal(bash or other sh
 curl -X GET "http://164.92.98.237/MantaIDapi/ID_search?ID={ID of interest}&quick={mode}" -H "accept: */*"
 ```
 
-You can also perform it in R with `GET` method. The result can retrieved as a dataframe by running the script below in R.
+You can also perform it in R with `GET` method. The result can retrieved as a dataframe, containing matched databases, by running the script below in R.
 
 ```R
 install.packages("httr","jsonlite")
