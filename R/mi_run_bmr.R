@@ -21,7 +21,7 @@ mi_run_bmr <- function(data, row_num = 1000, resamplings = rsmps("cv", folds = 1
   task <- data %>%
     slice(sample(nrow(data), row_num), preserve = TRUE) %>%
     as.data.table() %>%
-    as_task_classif(target = "class", feature = -c("class"))
+    as_task_classif(target = "class", feature = -c("class"),id= "bmr")
   learners <- lrns(c("classif.naive_bayes", "classif.rpart", "classif.ranger", "classif.xgboost", "classif.kknn", "classif.multinom"),
     predict_type = "prob",
     predict_sets = c("train", "test")

@@ -63,9 +63,9 @@ Then filter the attributes further by looking at the dataset to select the datas
 The 'mi_get_ID' function automatically retrieves the incoming attributes and processes the results into a long table.
 
 ```{r}
-attributes = mi_get_ID_attr(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
+attributes = mi_get_ID_attr(biomart = "genes", dataset = "hsapiens_gene_ensembl")
 flt_attri = attributes %>% slice(1,2,6,7)
-data_ID = mi_get_ID(flt_attri,biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
+data_ID = mi_get_ID(flt_attri,biomart = "genes", dataset = "hsapiens_gene_ensembl")
 data_ID
 ```
 
@@ -81,14 +81,14 @@ data <- tibble::tibble(
 	'ensembl_exon_id' = c("ENSE00002398851","ENSE00002398851","ENSE00002398851","ENSE00002398851"),
 	'refseq_peptide' = c("NP_001303256","-","NP_001382772","NP_001340728")
 )
-data_ID = mi_clean_data(data,placeholder="-")
+data_ID_clean = mi_clean_data(data,placeholder="-")
 ```
 
 Unlike other data, the features of ID are the positions of the constituent characters, and it is not possible to train only one column of "ID", so it is split into a single character vector to obtain the features, and the vector is filled with "\*" to the length of the maximum ID to ensure consistent data dimension.
 
 ```{r}
 pad_len = mi_get_padlen(data_ID)
-data_splt = mi_split_col(data_ID,cores = 1,pad_len = pad_len)
+data_splt = mi_split_col(data_ID,cores = NULL,pad_len = pad_len)
 str(data_splt)
 ```
 
@@ -115,6 +115,7 @@ The first thing that needs to be done is the initial selection of a machine lear
 The `row_num` parameter determines the number of data items to be used, if the data is large then a portion of the data will be extracted for testing, otherwise all of the data will be used for testing. This step requires the use of the original dataset rather than the balanced dataset;
 
 ```{r echo=FALSE, message=FALSE, hide=TRUE}
+result <- mi_run_bmr(train, row_num = 4000) 
 result <- mi_run_bmr(data_fct, row_num = 4000)
 benchmark <- result[1]
 score <- result[2] %>% as.data.table() %T>% print()
@@ -123,7 +124,7 @@ score <- result[2] %>% as.data.table() %T>% print()
 The results were used to determine the choice of models for decision trees, random forests, and XGBoost.
 
 ```{r}
-train = data_blcd[[1]]
+train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~replace_na(.x,0))) %>% slice(sample(nrow(data), row_num), preserve = TRUE) 
 test = data_blcd[[2]]
 #Decision Tree
 result_rg <- mi_train_rg(train, test, measure = msr("classif.acc"))

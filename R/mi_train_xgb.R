@@ -17,10 +17,10 @@ mi_train_xgb <- function(train, test, measure = msr("classif.acc"),instance = NU
   }
   task_train <- train %>%
     as.data.table() %>%
-    as_task_classif(target = "class", feature = -c("class"))
+    as_task_classif(target = "class", feature = -c("class"),id = "train_xgb")
   task_predict <- test %>%
     as.data.table() %>%
-    as_task_classif(target = "class", feature = -c("class"))
+    as_task_classif(target = "class", feature = -c("class"),id = "test_xgb")
   train_set <- partition(task_train, ratio = 1)$train
   test_set <- partition(task_predict, ratio = 0)$test
   set_threads(learner)
