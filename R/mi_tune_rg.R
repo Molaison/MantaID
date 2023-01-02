@@ -1,4 +1,4 @@
-#' Tune Random Forest model by hyperband.
+#' Tune the Random Forest model by hyperband.
 #'
 #' @param data A tibble.All are numeric except the first column is a factor.
 #' @param resampling R6/Resampling.

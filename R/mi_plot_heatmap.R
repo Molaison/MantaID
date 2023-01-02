@@ -1,7 +1,7 @@
 #' Plot heatmap for result confusion matrix.
 #'
 #' @param table A table.
-#' @param filepath File path the plot to save.Default NULL.
+#' @param filepath File path the plot to save. Default NULL.
 #' @param name Model names.
 #'
 #' @importFrom reshape2 melt

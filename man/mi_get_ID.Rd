@@ -2,7 +2,7 @@
 % Please edit documentation in R/mi_get_ID.R
 \name{mi_get_ID}
 \alias{mi_get_ID}
-\title{Get ID data from \code{Biomart} database use \code{attributes}.}
+\title{Get ID data from the \code{Biomart} database using \code{attributes}.}
 \usage{
 mi_get_ID(
   attributes,
@@ -14,7 +14,7 @@ mi_get_ID(
 \arguments{
 \item{attributes}{A dataframe.The information we want to retrieve.Use \code{mi_get_ID_attr} to hava try.}
 
-\item{biomart}{BioMart database name you want to connect to.Use \code{biomaRt::listEnsembl} to retrieve the possible database names.}
+\item{biomart}{BioMart database name you want to connect to. Use \code{biomaRt::listEnsembl} to retrieve the possible database names.}
 
 \item{dataset}{Datasets of the selected BioMart database.}
 
@@ -24,5 +24,5 @@ mi_get_ID(
 A \code{tibble} dataframe.
 }
 \description{
-Get ID data from \code{Biomart} database use \code{attributes}.
+Get ID data from the \code{Biomart} database using \code{attributes}.
 }

@@ -1,7 +1,7 @@
-#' Compute the confusion matrix for the predict result.
+#' Compute the confusion matrix for the predicted result.
 #'
 #' @param ifnet Logical.Whether the data is obtained by a deep learning model.
-#' @param result_list A list return from model training functions.
+#' @param result_list A list returned from model training functions.
 #'
 #' @importFrom data.table as.data.table
 #' @importFrom dplyr select

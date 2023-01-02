@@ -2,16 +2,16 @@
 % Please edit documentation in R/mi_get_miss.R
 \name{mi_get_miss}
 \alias{mi_get_miss}
-\title{Observe the distribution of the false response of test set.}
+\title{Observe the distribution of the false response of the test set.}
 \usage{
 mi_get_miss(predict)
 }
 \arguments{
-\item{predict}{A R6 class \code{PredictionClassif}.}
+\item{predict}{An R6 class \code{PredictionClassif}.}
 }
 \value{
-A tibble data frame that records the number of wrong predictions for each category ID;
+A tibble data frame that records the number of wrong predictions for each category ID
 }
 \description{
-Observe the distribution of the false response of test set.
+Observe the distribution of the false response of the test set.
 }

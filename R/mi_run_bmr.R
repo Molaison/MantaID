@@ -2,7 +2,7 @@
 #'
 #' @param data A tibble.All are numeric except the first column is a factor.
 #'
-#' @param row_num Number of samples used.
+#' @param row_num The number of samples used.
 #' @param resamplings R6/Resampling.Resampling method.
 #' @importFrom dplyr slice select across mutate
 #' @importFrom tidyselect everything

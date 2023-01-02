@@ -1,10 +1,10 @@
 #' Train a three layers neural network model.
 #'
-#' @param train A dataframe with `class` column as label.
-#' @param test A dataframe with `class` column as label.
+#' @param train A dataframe with the `class` column as label.
+#' @param test A dataframe with the `class` column as label.
 #' @param path2save The folder path to store the model and train history.
-#' @param batch_size Integer or NULL.Number of samples per gradient update.
-#' @param epochs Number of epochs to train the model.
+#' @param batch_size Integer or NULL. The number of samples per gradient update.
+#' @param epochs The number of epochs to train the model.
 #' @param cls A character.The name of the label column.
 #' @param validation_split Float between 0 and 1. Fraction of the training data to be used as validation data.
 #'
@@ -14,7 +14,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom stats predict
 #' @importFrom stringr str_c
-#' @return A `list` object th at contains the prediction confusion matrix, the `model` object, the mapping of predicted number to classes.
+#' @return A `list` object containing the prediction confusion matrix, the `model` object, and the mapping of predicted numbers to classes.
 #' @export
 mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3) {
   train <- train %>%

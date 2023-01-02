@@ -6,7 +6,7 @@
 #' @param instance A tuner.
 #' @importFrom data.table as.data.table
 #' @importFrom mlr3 as_task_classif lrn  set_threads msr partition
-#' @return A list of learner for predict and predict result of test set.
+#' @return A list of learner for predicting and predicted result of test set.
 #' @export
 mi_train_rp <- function(train, test, measure = msr("classif.acc"),instance = NULL) {
   learner <- lrn("classif.rpart", keep_model = TRUE,xval=0, cp=0.0005253, maxdepth=24,

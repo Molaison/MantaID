@@ -1,11 +1,11 @@
 #' Data balance.
 #' Most classes adopt random undersampling, while a few classes adopt smote method to oversample to obtain relatively balanced data;
 #'
-#' @param data A data frame. Except class column, all are numeric types.
-#' @param ratio Numeric between 0 and 1. The percent of test set split from data.
+#' @param data A data frame. Except for class column, all are numeric types.
+#' @param ratio Numeric between 0 and 1. The percent of the test set split from data.
 #' @param parallel Logical.
 #'
-#' @return A list contain train set and test set.
+#' @return A list contains a train set and a test set.
 #' @export
 #' @importFrom scutr SCUT_parallel SCUT oversample_smote resample_random
 #' @importFrom data.table as.data.table

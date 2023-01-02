@@ -8,14 +8,14 @@ Most classes adopt random undersampling, while a few classes adopt smote method 
 mi_balance_data(data, ratio = 0.3, parallel = FALSE)
 }
 \arguments{
-\item{data}{A data frame. Except class column, all are numeric types.}
+\item{data}{A data frame. Except for class column, all are numeric types.}
 
-\item{ratio}{Numeric between 0 and 1. The percent of test set split from data.}
+\item{ratio}{Numeric between 0 and 1. The percent of the test set split from data.}
 
 \item{parallel}{Logical.}
 }
 \value{
-A list contain train set and test set.
+A list contains a train set and a test set.
 }
 \description{
 Data balance.

@@ -1,4 +1,4 @@
-#' Tune decision tree model by hyperband.
+#' Tune the Decision Tree model by hyperband.
 #'
 #' @param data A tibble.All are numeric except the first column is a factor.
 #' @param resampling R6/Resampling.

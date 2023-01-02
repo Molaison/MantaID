@@ -1,8 +1,8 @@
-#' Get ID data from `Biomart` database use `attributes`.
+#' Get ID data from the `Biomart` database using `attributes`.
 #'
 #' @param dataset Datasets of the selected BioMart database.
 #' @param mirror Specify an Ensembl mirror to connect to.
-#' @param biomart BioMart database name you want to connect to.Use `biomaRt::listEnsembl` to retrieve the possible database names.
+#' @param biomart BioMart database name you want to connect to. Use `biomaRt::listEnsembl` to retrieve the possible database names.
 #' @param attributes A dataframe.The information we want to retrieve.Use `mi_get_ID_attr` to hava try.
 #'
 #' @importFrom biomaRt useEnsembl getBM

@@ -1,4 +1,4 @@
-#' Get ID attributes from `Biomart` database.
+#' Get ID attributes from the `Biomart` database.
 #'
 #' @param dataset Datasets of the selected BioMart database.
 #' @param mirror Specify an Ensembl mirror to connect to.

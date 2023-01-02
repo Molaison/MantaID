@@ -1,6 +1,6 @@
 #' Predict with four models and unify results by the sub-model's specificity score to the four possible classes.
 #'
-#' @param data A dataframe contains ID column.
+#' @param data A dataframe contains the ID column.
 #' @param col_id The name of ID column.
 #'
 #' @return A dataframe.

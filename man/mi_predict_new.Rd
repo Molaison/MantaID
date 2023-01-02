@@ -2,18 +2,18 @@
 % Please edit documentation in R/mi_predict_new.R
 \name{mi_predict_new}
 \alias{mi_predict_new}
-\title{Predict new data with trained learner.}
+\title{Predict new data with a trained learner.}
 \usage{
 mi_predict_new(data, learner)
 }
 \arguments{
 \item{data}{A dataframe.}
 
-\item{learner}{A R6 class object.}
+\item{learner}{An R6 class object.}
 }
 \value{
 A data frame that contains features and 'predict' class.
 }
 \description{
-Predict new data with trained learner.
+Predict new data with a trained learner.
 }

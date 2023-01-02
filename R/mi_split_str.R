@@ -1,7 +1,7 @@
 #' Split the string into individual characters and complete the character vector to the maximum length.
 #'
 #' @param str The string to be splited.
-#' @param pad_len The length of longest id, i.e. the maxlength.
+#' @param pad_len The length of longest ID, i.e. the maxlength.
 #' @export
 #' @return Splited character vector.
 #' @examples

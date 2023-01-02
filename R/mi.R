@@ -1,8 +1,8 @@
 #' A wrapper function that executes MantaID workflow.
 #'
 #' @param cores The number of cores used when balancing data.
-#' @param levels The vector that includes all the single character occurred in IDs.
-#' @param ratio The ratio of test set.
+#' @param levels The vector that includes all the single characters occurred in IDs.
+#' @param ratio The ratio of the test set.
 #' @param para_blc A logical value whether using parallel computing when balancing data.
 #' @param model_path The path to save models.
 #' @param batch_size The batch size of deep learning model fitting.

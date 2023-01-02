@@ -2,7 +2,7 @@
 % Please edit documentation in R/mi_get_ID_attr.R
 \name{mi_get_ID_attr}
 \alias{mi_get_ID_attr}
-\title{Get ID attributes from \code{Biomart} database.}
+\title{Get ID attributes from the \code{Biomart} database.}
 \usage{
 mi_get_ID_attr(
   biomart = "genes",
@@ -21,5 +21,5 @@ mi_get_ID_attr(
 A dataframe.
 }
 \description{
-Get ID attributes from \code{Biomart} database.
+Get ID attributes from the \code{Biomart} database.
 }

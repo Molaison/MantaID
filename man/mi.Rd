@@ -22,9 +22,9 @@ mi(
 
 \item{cores}{The number of cores used when balancing data.}
 
-\item{levels}{The vector that includes all the single character occurred in IDs.}
+\item{levels}{The vector that includes all the single characters occurred in IDs.}
 
-\item{ratio}{The ratio of test set.}
+\item{ratio}{The ratio of the test set.}
 
 \item{para_blc}{A logical value whether using parallel computing when balancing data.}
 

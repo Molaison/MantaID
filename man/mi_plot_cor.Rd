@@ -7,7 +7,7 @@
 mi_plot_cor(data, cls = "class")
 }
 \arguments{
-\item{data}{Data frame that including IDs' position features.}
+\item{data}{Data frame including IDs' position features.}
 
 \item{cls}{The name of the class column.}
 }

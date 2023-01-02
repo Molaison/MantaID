@@ -1,4 +1,4 @@
-#' Convert data to numeric, and for ID column convert with fixed levels.
+#' Convert data to numeric, and for the ID column convert with fixed levels.
 #' @export
 #' @importFrom  dplyr across mutate
 #' @param data A tibble with n position column(pos1,pos2,...) and class column.

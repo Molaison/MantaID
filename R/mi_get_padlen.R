@@ -2,7 +2,7 @@
 #'
 #' @param data A dataframe.
 #' @importFrom dplyr pull
-#' @return A int.
+#' @return An int object.
 #' @export
 #' @examples
 #' data(mi_data_rawID)

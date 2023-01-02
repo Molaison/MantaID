@@ -2,12 +2,12 @@
 % Please edit documentation in R/mi_get_confusion.R
 \name{mi_get_confusion}
 \alias{mi_get_confusion}
-\title{Compute the confusion matrix for the predict result.}
+\title{Compute the confusion matrix for the predicted result.}
 \usage{
 mi_get_confusion(result_list, ifnet = FALSE)
 }
 \arguments{
-\item{result_list}{A list return from model training functions.}
+\item{result_list}{A list returned from model training functions.}
 
 \item{ifnet}{Logical.Whether the data is obtained by a deep learning model.}
 }
@@ -15,5 +15,5 @@ mi_get_confusion(result_list, ifnet = FALSE)
 A \code{confusionMatrix} object.
 }
 \description{
-Compute the confusion matrix for the predict result.
+Compute the confusion matrix for the predicted result.
 }

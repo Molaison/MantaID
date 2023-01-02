@@ -64,7 +64,7 @@ The 'mi_get_ID' function automatically retrieves the incoming attributes and pro
 
 ```{r}
 attributes = mi_get_ID_attr(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
-flt_attri = attributes %>% slice(1,3,5,7)
+flt_attri = attributes %>% slice(1,2,6,7)
 data_ID = mi_get_ID(flt_attri,biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
 data_ID
 ```
@@ -88,7 +88,7 @@ Unlike other data, the features of ID are the positions of the constituent chara
 
 ```{r}
 pad_len = mi_get_padlen(data_ID)
-data_splt = mi_split_col(data_ID,cores = NULL,pad_len = pad_len)
+data_splt = mi_split_col(data_ID,cores = 1,pad_len = pad_len)
 str(data_splt)
 ```
 

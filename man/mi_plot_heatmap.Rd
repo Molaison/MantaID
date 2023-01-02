@@ -11,7 +11,7 @@ mi_plot_heatmap(table, name = NULL, filepath = NULL)
 
 \item{name}{Model names.}
 
-\item{filepath}{File path the plot to save.Default NULL.}
+\item{filepath}{File path the plot to save. Default NULL.}
 }
 \value{
 A \code{ggplot} object.

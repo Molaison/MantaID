@@ -1,6 +1,6 @@
 globalVariables(".data")
 globalVariables(".")
-#' Tune Xgboost model by hyperband.
+#' Tune the Xgboost model by hyperband.
 #'
 #' @param data A tibble.All are numeric except the first column is a factor.
 #' @param resampling R6/Resampling.

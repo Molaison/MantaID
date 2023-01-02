@@ -10,7 +10,7 @@ mi_get_padlen(data)
 \item{data}{A dataframe.}
 }
 \value{
-A int.
+An int object.
 }
 \description{
 Get max length of ID data.

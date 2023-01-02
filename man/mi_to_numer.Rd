@@ -2,7 +2,7 @@
 % Please edit documentation in R/mi_to_numer.R
 \name{mi_to_numer}
 \alias{mi_to_numer}
-\title{Convert data to numeric, and for ID column convert with fixed levels.}
+\title{Convert data to numeric, and for the ID column convert with fixed levels.}
 \usage{
 mi_to_numer(
   data,
@@ -18,7 +18,7 @@ mi_to_numer(
 A numeric data frame with numerical or factor type columns.
 }
 \description{
-Convert data to numeric, and for ID column convert with fixed levels.
+Convert data to numeric, and for the ID column convert with fixed levels.
 }
 \examples{
 data(mi_data_procID)

@@ -1,6 +1,6 @@
 #' Plot correlation heatmap.
 #'
-#' @param data Data frame that including IDs' position features.
+#' @param data Data frame including IDs' position features.
 #' @param cls The name of the class column.
 #'
 #' @importFrom stats cor

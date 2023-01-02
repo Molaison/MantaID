@@ -2,7 +2,7 @@
 % Please edit documentation in R/mi_tune_rg.R
 \name{mi_tune_rg}
 \alias{mi_tune_rg}
-\title{Tune Random Forest model by hyperband.}
+\title{Tune the Random Forest model by hyperband.}
 \usage{
 mi_tune_rg(
   data,
@@ -24,5 +24,5 @@ mi_tune_rg(
 A list of tuning instance and stage plot.
 }
 \description{
-Tune Random Forest model by hyperband.
+Tune the Random Forest model by hyperband.
 }

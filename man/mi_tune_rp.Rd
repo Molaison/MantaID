@@ -2,7 +2,7 @@
 % Please edit documentation in R/mi_tune_rp.R
 \name{mi_tune_rp}
 \alias{mi_tune_rp}
-\title{Tune decision tree model by hyperband.}
+\title{Tune the Decision Tree model by hyperband.}
 \usage{
 mi_tune_rp(
   data,
@@ -24,5 +24,5 @@ mi_tune_rp(
 A list of tuning instance and stage plot.
 }
 \description{
-Tune decision tree model by hyperband.
+Tune the Decision Tree model by hyperband.
 }

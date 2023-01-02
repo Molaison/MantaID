@@ -9,7 +9,7 @@ mi_split_str(str, pad_len)
 \arguments{
 \item{str}{The string to be splited.}
 
-\item{pad_len}{The length of longest id, i.e. the maxlength.}
+\item{pad_len}{The length of longest ID, i.e. the maxlength.}
 }
 \value{
 Splited character vector.

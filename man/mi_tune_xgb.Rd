@@ -2,7 +2,7 @@
 % Please edit documentation in R/mi_tune_xgb.R
 \name{mi_tune_xgb}
 \alias{mi_tune_xgb}
-\title{Tune Xgboost model by hyperband.}
+\title{Tune the Xgboost model by hyperband.}
 \usage{
 mi_tune_xgb(
   data,
@@ -24,5 +24,5 @@ mi_tune_xgb(
 A list of tuning instance and stage plot.
 }
 \description{
-Tune Xgboost model by hyperband.
+Tune the Xgboost model by hyperband.
 }

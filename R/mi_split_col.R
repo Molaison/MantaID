@@ -13,9 +13,9 @@ mi_split_col <- function(data, cores = NULL, pad_len = 10) {
 
   core_max <- detectCores(logical = FALSE)%/%2
   if (is.null(cores)) {
-    cl <- makeCluster(core_max)
+    cl <- makeCluster(core_max,port = 1223)
   } else {
-    cl <- makeCluster(cores)
+    cl <- makeCluster(cores,port = 1223)
   }
   mi_split_str <- function(str, pad_len) {
     str %>%
@@ -26,7 +26,7 @@ mi_split_col <- function(data, cores = NULL, pad_len = 10) {
       .[1:pad_len]
   }
   clusterExport(cl, varlist = c("pad_len", "mi_split_str"), envir = environment())
-  clusterEvalQ(cl, c(library(data.table), library(magrittr), library(stringr),library(dplyr)))
+  clusterEvalQ(cl, c(library(magrittr)))
   output <- parSapply(cl, data[, 1][[1]], mi_split_str, pad_len)
   stopCluster(cl)
   output %>%

@@ -1,7 +1,7 @@
-#' Predict new data with trained learner.
+#' Predict new data with a trained learner.
 #' @param data A dataframe.
 #'
-#' @param learner A R6 class object.
+#' @param learner An R6 class object.
 #' @importFrom dplyr rename mutate across select bind_cols
 #' @importFrom tidyselect everything
 #' @importFrom data.table as.data.table

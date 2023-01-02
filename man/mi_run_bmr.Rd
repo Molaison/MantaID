@@ -9,7 +9,7 @@ mi_run_bmr(data, row_num = 1000, resamplings = rsmps("cv", folds = 10))
 \arguments{
 \item{data}{A tibble.All are numeric except the first column is a factor.}
 
-\item{row_num}{Number of samples used.}
+\item{row_num}{The number of samples used.}
 
 \item{resamplings}{R6/Resampling.Resampling method.}
 }

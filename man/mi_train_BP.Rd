@@ -15,22 +15,22 @@ mi_train_BP(
 )
 }
 \arguments{
-\item{train}{A dataframe with \code{class} column as label.}
+\item{train}{A dataframe with the \code{class} column as label.}
 
-\item{test}{A dataframe with \code{class} column as label.}
+\item{test}{A dataframe with the \code{class} column as label.}
 
 \item{cls}{A character.The name of the label column.}
 
 \item{path2save}{The folder path to store the model and train history.}
 
-\item{batch_size}{Integer or NULL.Number of samples per gradient update.}
+\item{batch_size}{Integer or NULL. The number of samples per gradient update.}
 
-\item{epochs}{Number of epochs to train the model.}
+\item{epochs}{The number of epochs to train the model.}
 
 \item{validation_split}{Float between 0 and 1. Fraction of the training data to be used as validation data.}
 }
 \value{
-A \code{list} object th at contains the prediction confusion matrix, the \code{model} object, the mapping of predicted number to classes.
+A \code{list} object containing the prediction confusion matrix, the \code{model} object, and the mapping of predicted numbers to classes.
 }
 \description{
 Train a three layers neural network model.
