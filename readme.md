@@ -18,6 +18,9 @@ if (!requireNamespace("devtools", quietly = TRUE))
 install_bitbucket("Molaison/MantaID")
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
+library(remotes)
+install_version("mlr3learners","0.5.1")
+install_version("mlr3","0.13.4")
 BiocManager::install("biomaRt", version = "3.8")
 ```
 
@@ -95,7 +98,7 @@ The current feature columns are strings, which cannot be used for training yet, 
 data_fct = mi_to_numer(data_splt,levels = c("*", 0:9, letters, LETTERS, "_", ".", "-", " ", "/", "\\", ":"))
 ```
 
-### Data Balancing:
+#### Data Balancing:
 
 To prevent the trained model from losing its ability to distinguish between databases with small numbers of IDs, it is necessary to balance the data. On the one hand, the smote method is used to oversample databases with small numbers of IDs in order to increase the data density, and on the other hand, databases with large numbers of IDs are undersampled through random sampling to reduce the number. The data set obtained through balancing cannot be used as the test set any longer, so the ratio proportion of the original data set is divided as the test set, and this portion of the data is removed from the balanced data set, and the remaining portion is used as the training set; however, it should be noted that the parallel parameter is only supported by Mac.
 
@@ -131,14 +134,14 @@ result_xgboost <- mi_train_xgb(train, test, measure = msr("classif.acc"))
 
 In addition to several classical machine learning algorithms, a BP neural network is used for classification.
 
-This is achieved by calling `tensorflow` via the `keras` package, so `tensorflow` needs to be installed first.
+This is achieved by calling `tensorflow` via the `keras` package, so `tensorflow` needs to be installed first. 
 
 ```r
-tensorflow::install_tensorflow()
 install.packages("reticulate")
 library(reticulate)
-path_to_python <- install_python()
+path_to_python <- install_python(version = "3.8.7")
 virtualenv_create("r-reticulate", python = path_to_python)
+
 library(tensorflow)
 install_tensorflow(envname = "r-reticulate")
 library(keras)
@@ -151,7 +154,7 @@ The meaning of parameters are (1) train, the training set; (2) test, the test se
 result_net <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
 ```
 
-### Confusion matrix :
+#### Confusion matrix :
 
 `cnfs_matri` function converts the results of model training into an obfuscation matrix; the results of the model training function are used directly as input; the `ifnet` argument is a logical value, TRUE for a neural network model;
 `mi_plot_heatmap` plots the heatmap for the confusion matrix; name, the model name, the suffix when the file is stored; filepath, the path when the model is stored.
