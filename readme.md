@@ -46,7 +46,7 @@ res = GET("http://164.92.98.237/MantaIDapi/ID_search?ID={ID of interest}&quick={
 resultDF <- fromJSON(as.data.frame(fromJSON(rawToChar(res$content)))[1,1])
 ```
 
-### MantaID pacakage User instructions:
+### MantaID package User instructions:
 
 ```R
 library(MantaID) 
@@ -81,7 +81,7 @@ data <- tibble::tibble(
 data_ID_clean = mi_clean_data(data,placeholder="-")
 ```
 
-Unlike other data, the features of ID are the positions of the constituent characters. It is impossible to train just one column of "ID," so it is divided into a single character vector to obtain the features, and the vector is filled with "*" to the length of the maximum ID to ensure consistent data dimension. 
+Unlike other data, the features of ID are the positions of the constituent characters. It is impossible to train just one column of "ID", so it is divided into a single character vector to obtain the features, and the vector is filled with "*" to the length of the maximum ID to ensure consistent data dimension. 
 
 ```r
 pad_len = mi_get_padlen(data_ID)
@@ -125,7 +125,7 @@ test = data_blcd[[2]]
 result_rg <- mi_train_rg(train, test, measure = msr("classif.acc"))
 #Random Forest
 result_rp <- mi_train_rp(train, test, measure = msr("classif.acc"))
-#Xboost
+#Xgboost
 result_xgboost <- mi_train_xgb(train, test, measure = msr("classif.acc"))
 ```
 
