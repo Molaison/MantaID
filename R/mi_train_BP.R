@@ -30,14 +30,14 @@ mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size
     select(-class) %>%
     as.matrix()
 
-  train_target <- train$class %>%
+  train_target <- train$class %>% factor() %>%
     as.numeric() %>%
-    to_categorical() %>%
-    magrittr::set_names(levels(test$class))
-  test_target <- test$class %>%
+      to_categorical()
+  train_target = train_target[,-c(1)]
+  test_target <- test$class %>%factor() %>%
     as.numeric() %>%
-    to_categorical() %>%
-    magrittr::set_names(levels(test$class))
+    to_categorical()
+  test_target=test_target[,-c(1)]
   model <- keras_model_sequential()
   model %>%
     layer_dense(units = 40, input_shape = ncol(train_set)) %>%
@@ -52,6 +52,7 @@ mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size
     optimizer = optimizer_adam(),
     metrics = list("categorical_accuracy")
   )
+
   history <- model %>% fit(
     x = train_set, y = train_target,
     epochs = epochs, batch_size = batch_size,
@@ -63,9 +64,9 @@ mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size
   predictions <- predict(model, test_set)
   response <- predictions %>% k_argmax()
   response <- response$numpy() %>%
-    as.numeric() %>%
-    levels(test$class)[.] %>%
-    factor(levels = levels(test$class))
+    as.numeric(.)+1
+  levels = levels(test$class)
+  response <- levels[response]
   prd_net <- confusionMatrix(response, test$class)
   score <- model %>% evaluate(test_set, test_target)
   return(list(model, prd_net,levels))

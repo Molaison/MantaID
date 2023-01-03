@@ -46,7 +46,7 @@ knitr::opts_chunk$set(time_it = TRUE)
 #   },error = function(e)e)
 # }
 # if(!require(IDentifyEngine)){
-	devtools::install_bitbucket("Molaison/MantaID")
+	devtools::install_bitbucket("Molaison/MantaID",upgrade = "never")
 # }
 # for(pac in packages){
 # 	library(pac,character.only = TRUE)
@@ -124,14 +124,14 @@ score <- result[2] %>% as.data.table() %T>% print()
 The results were used to determine the choice of models for decision trees, random forests, and XGBoost.
 
 ```{r}
-train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~replace_na(.x,0))) %>% slice(sample(nrow(data), row_num), preserve = TRUE) 
+train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~tidyr::replace_na(.x,0))) %>% dplyr::slice(sample(nrow(data_blcd[[1]]), 2000), preserve = TRUE) 
 test = data_blcd[[2]]
 #Decision Tree
 result_rg <- mi_train_rg(train, test, measure = msr("classif.acc"))
 #Random Forest
 result_rp <- mi_train_rp(train, test, measure = msr("classif.acc"))
 #Xboost
-result_xgboost <- mi_train_xgb(train, test, measure = msr("classif.acc"))
+result_xgb <- mi_train_xgb(train, test, measure = msr("classif.acc"))
 ```
 
 In addition to several classical machine learning algorithms, a BP neural network is used for classification.
@@ -139,13 +139,17 @@ In addition to several classical machine learning algorithms, a BP neural networ
 This is achieved by calling `tensorflow` via the `keras` package, so `tensorflow` needs to be installed first.
 
 ```{r}
-tensorflow::install_tensorflow()
+install.packages("reticulate")
+library(reticulate)
+path_to_python <- use_python(python = "D:\\Softwares\\Coding\\Python3.7.6\\python.exe")
+library(tensorflow)
+virtualenv_create("r-reticulate", python = path_to_python)
 ```
 
 The meaning of the parameters are (1) train, the training set; (2) test, the test set; (3) path2save, the path of the trained model, the default is NULL, not saved; (4) batch_size, the size of the training batch, the larger the training period, the shorter the training period, but the number of periods to achieve the same accuracy increases; (5) epochs, the number of training (5) epochs, the number of training periods, all samples are trained once; (6) validation_split, the proportion of data sets in the training set that are used to divide into validation sets;
 
 ```{R}
-result_net <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
+result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
 ```
 
 ### Confusion matrix :
@@ -163,4 +167,7 @@ mi_plot_heatmap(matri_rg, name="rg",filepath = "Graph/")
 mi_plot_heatmap(matri_rp, name="rp",filepath = "Graph/")
 mi_plot_heatmap(matri_xgb, name="xgb",filepath = "Graph/")
 mi_plot_heatmap(matri_net, name="xgb",filepath = "Graph/")
+
+data("mi_data_rawID")
+mi_unify_mod(mi_data_rawID, "ID",result_rg,result_rp,result_xgb,result_BP,c_value = 0.75, pad_len = pad_len)
 ```

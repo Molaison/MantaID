@@ -4,7 +4,7 @@
 #' @param col_id The name of ID column.
 #'
 #' @return A dataframe.
-mi_unify_mod <- function(data, col_id,result_rg,result_rp,result_xgboost,result_BP,c_value = 0.75, pad_len = 30) {
+mi_unify_mod <- function(data, col_id,result_rg,result_rp,result_xgb,result_BP,c_value = 0.75, pad_len = 30) {
 	data <- data %>%
 		select(col_id, everything()) %>%
 		rename("ID" = col_id) %>%
@@ -47,7 +47,7 @@ mi_unify_mod <- function(data, col_id,result_rg,result_rp,result_xgboost,result_
 			return(xmode)
 		}else if(length(xmode)==2){
 			sprintf("xmode = %d",length(xmode))
-			conf_list = list(conf_net,conf_rp,conf_rg,conf_xgb)
+
 			result = tibble(
 				names = vec,
 				weight = c(
@@ -91,17 +91,18 @@ mi_unify_mod <- function(data, col_id,result_rg,result_rp,result_xgboost,result_
 		mutate(across(.cols = everything(), .fns = ~ factor(.x, levels = c("*", 0:9, letters, LETTERS, "_", ".", "-", " ", "/", "\\", ":")))) %>%
 		mutate(across(.cols = everything(), .fns = ~ as.numeric(.x)))
 
-	learner_xgb <- result_xgboost[[1]]
+	learner_xgb <- result_xgb[[1]]
 	learner_rp <- result_rp[[1]]
 	learner_rg <- result_rg[[1]]
 	learner_BP <- result_BP[[1]]
 	conf_rp <- result_rp[[2]][["confusion"]]
 	conf_rg <- result_rg[[2]][["confusion"]]
-	conf_xgb <- result_xgboost[[2]][["confusion"]]
+	conf_xgb <- result_xgb[[2]][["confusion"]]
 	conf_net <- result_BP[[2]][["confusion"]]
+	conf_list = list(conf_net,conf_rp,conf_rg,conf_xgb)
 	rp <- prd_new(as.data.table(result), result_rp[[1]])
 	rg <- prd_new(result, result_rg[[1]])
-	xgb <- prd_new(result, result_xgboost[[1]])
+	xgb <- prd_new(result, result_xgb[[1]])
 	final = function(vec,conf_list,c=0.75){
 		vec = vec %>% as.character()
 		truth = vec[1]
@@ -114,10 +115,7 @@ mi_unify_mod <- function(data, col_id,result_rg,result_rp,result_xgboost,result_
 	predictions <- predict(learner_BP, as.matrix(result))
 	response <- predictions %>% k_argmax()
 	level <- result_BP[[3]]
-	response <- response$numpy() %>%
-		as.numeric() %>%
-		level[.] %>%
-		factor(levels = level)
+	response <-levels(level)[response$numpy() %>%as.numeric()+1]
 
 	predict_all = response %>%
 		bind_cols(select(rp, 1)) %>%

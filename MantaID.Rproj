@@ -21,3 +21,7 @@ PackageUseDevtools: Yes
 PackageInstallArgs: --no-multiarch --with-keep.source
 PackageCheckArgs: --as-cran
 PackageRoxygenize: rd,collate,namespace
+
+PythonType: system
+PythonVersion: 3.7.6rc1
+PythonPath: D:/Softwares/Coding/Python3.7.6/python.exe
