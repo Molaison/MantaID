@@ -34,13 +34,14 @@ BiocManager::install("biomaRt", version = "3.16")
 
 ### How To Use An API:
 
-For a smaller number of ID identifications, MantaID accomplishes a more thorough approach, and it can also be utilized with MantaID API. To identify potential databases, we first remove any mismatched databases using regular expressions, visit the corresponding resource page using the URL, filter the results based on the access status code, then retrieve the text of the web page and determine whether it contains information about nonexistent resources.
+For a smaller number of ID identifications, MantaID accomplishes a more thorough approach, and it can also be utilized with MantaID API. 
+
+To identify potential databases, we first remove any mismatched databases using **regular expressions**, visit the corresponding resource page using the URL, filter the results based on the access **status code**, then retrieve **the text of the web page** and determine whether it contains information about nonexistent resources.
 
 In addition, users can choose the search mode according to their personal needs, which can be divided into "quick" and "general".
 
-
 ```bash
-curl -X GET "http://164.92.98.237/MantaIDapi/ID_search?ID={ID of interest}&quick={mode}" -H "accept: */*"
+curl -X GET "http://164.92.98.237/MantaIDapi/ID_Search?ID={ID of interest}&SearchMode={mode}" -H "accept: */*"
 ```
 
 You can also perform it in R with the `GET` method. The result can be retrieved as a data frame, containing matched databases, by running the script below in R.
@@ -49,7 +50,7 @@ You can also perform it in R with the `GET` method. The result can be retrieved 
 install.packages("httr","jsonlite")
 library(httr)
 library(jsonlite)
-res = GET("http://164.92.98.237/MantaIDapi/ID_search?ID={ID of interest}&quick={mode}")
+res = GET("http://164.92.98.237/MantaIDapi/ID_Search?ID={ID of interest}&SearchMode={mode}")
 resultDF <- fromJSON(as.data.frame(fromJSON(rawToChar(res$content)))[1,1])
 ```
 
@@ -59,7 +60,7 @@ resultDF <- fromJSON(as.data.frame(fromJSON(rawToChar(res$content)))[1,1])
 library(MantaID) 
 ```
 
-#### Data Acquisition:
+#### Data Retrieving:
 
 biomaRt provides an interface to R and the BioMart software suite databases (e.g.  Ensembl,  Uniprot,  HapMap), allowing direct access to information in the databases via R.
 
@@ -111,7 +112,7 @@ The data set produced by balancing cannot be used as the test set any longer, so
 data_blcd = mi_balance_data(data_fct,ratio = 0.3,parallel = F)
 ```
 
-#### Model Training:
+#### Models Training:
 
 Due to the large size of the dataset, the model training time is too long, so only a certain number of samples are taken for training; where the training set and the dataset are divided by calling the partition function, which exists as an index of the original data; three models are used for benchmark training, namely decision tree, random forest and plain Bayes, and resampling is performed using the five-fold crossover method; benchmark() The training was performed, and the training and test sets were evaluated separately after training (costs&ce); accepts four parameters, all of which have default parameters except data; data is the incoming data, where the target column (i.e. the column where the ID database name is located) must have the column name "class", and all columns are of type factor;
 
@@ -163,7 +164,7 @@ The meaning of parameters are (1) train, the training set; (2) test, the test se
 result_net <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
 ```
 
-#### Confusion Matrix :
+#### Models Explaining:
 
 `cnfs_matri` function converts the results of model training into an obfuscation matrix; the results of the model training function are used directly as input; the `ifnet` argument is a logical value, TRUE for a neural network model;
 `mi_plot_heatmap` plots the heatmap for the confusion matrix; name, the model name, the suffix when the file is stored; filepath, the path when the model is stored.
