@@ -57,7 +57,7 @@ mi_unify_mod <- function(data, col_id,result_rg,result_rp,result_xgb,result_BP,c
 					final(vec = swap(vec,4),conf_list = swap(conf_list,4),c = c_value)
 				)
 			)%>% group_by(names) %>% summarise(sum= sum(weight))
-			return(result[[which.max(result$sum),1]])
+			return(as.character(result[[which.max(result$sum),1]]))
 		}else if(length(xmode)==4){
 			sprintf("xmode = %d",length(xmode))
 			result <- c(
@@ -66,7 +66,7 @@ mi_unify_mod <- function(data, col_id,result_rg,result_rp,result_xgb,result_BP,c
 				final(vec = swap(vec,3),conf_list = swap(conf_list,3)),
 				final(vec = swap(vec,4),conf_list = swap(conf_list,4))
 			)
-			return(vec[which.max(result)])
+			return(as.character(vec[which.max(result)]))
 		}
 	}
 
@@ -98,31 +98,23 @@ mi_unify_mod <- function(data, col_id,result_rg,result_rp,result_xgb,result_BP,c
 	conf_rp <- result_rp[[2]][["confusion"]]
 	conf_rg <- result_rg[[2]][["confusion"]]
 	conf_xgb <- result_xgb[[2]][["confusion"]]
-	conf_net <- result_BP[[2]][["confusion"]]
+	conf_net <- result_BP[[2]][["table"]]
 	conf_list = list(conf_net,conf_rp,conf_rg,conf_xgb)
 	rp <- prd_new(as.data.table(result), result_rp[[1]])
 	rg <- prd_new(result, result_rg[[1]])
 	xgb <- prd_new(result, result_xgb[[1]])
-	final = function(vec,conf_list,c=0.75){
-		vec = vec %>% as.character()
-		truth = vec[1]
-		value = conf_list[[1]][truth,truth]/sum(conf_list[[1]][,truth])
-		for(i in 2:4){
-			value = value*(conf_list[[i]][truth,vec[i]]/sum(conf_list[[i]][,vec[i]])*(1-c)+c)
-		}
-		return(value)
-	}
+
 	predictions <- predict(learner_BP, as.matrix(result))
 	response <- predictions %>% k_argmax()
 	level <- result_BP[[3]]
-	response <-levels(level)[response$numpy() %>%as.numeric()+1]
+	response <-factor(level[response$numpy() %>%as.numeric()+1],level)
 
 	predict_all = response %>%
-		bind_cols(select(rp, 1)) %>%
-		bind_cols(select(rg, 1)) %>%
-		bind_cols(select(xgb, 1)) %>%
+		bind_cols(select(rp, "response")) %>%
+		bind_cols(select(rg, "response")) %>%
+		bind_cols(select(xgb, "response")) %>%
 		set_names(c("Deeplearn","DecisionTree", "RandomForest", "Xgboost"))
-	major_result = pmap(predict_all,major) %>% unlist() %>% bind_cols(predict_all)
+	major_result = pmap(predict_all,major) %>% unlist() %>% bind_cols(predict_all) %>% set_names(c("Integrated","Deeplearn","DecisionTree", "RandomForest", "Xgboost"))
 
 	return(major_result)
 }

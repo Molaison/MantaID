@@ -15,7 +15,6 @@ MantaID: a machine-learning-based tool that automatically recognizes biological 
 ```R
 if (!requireNamespace("devtools", quietly = TRUE))
     install.packages("devtools")
-install_bitbucket("Molaison/MantaID")
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 if (!requireNamespace("remotes", quietly = TRUE))
@@ -25,6 +24,7 @@ install_version("mlr3learners","0.5.1",force = T,upgrade ="never")
 install_version("mlr3tuning","0.13.1",force = T,upgrade ="never")
 install_version("mlr3","0.13.4",force = T,upgrade ="never")
 BiocManager::install("biomaRt", version = "3.16")
+install_bitbucket("Molaison/MantaID")
 ```
 
 ### Descriptions:
@@ -90,7 +90,7 @@ data_ID_clean = mi_clean_data(data,placeholder="-")
 
 The features of ID, in contrast to other data, are the placements of the constituent characters. Since it is impossible to train on only one column of "ID," it is split into a single character vector to extract the features, and the vector is filled with "*" up to the maximum ID to guarantee consistent data dimension. 
 
-```r
+```R
 pad_len = mi_get_padlen(data_ID)
 data_splt = mi_split_col(data_ID,cores = NULL,pad_len = pad_len)
 str(data_splt)
@@ -98,7 +98,7 @@ str(data_splt)
 
 It is necessary to convert the existing feature columns to factor types because they are currently strings and cannot be used for training. Because of characters appear in different feature columns in a different order, the levels parameter must be set in order to standardize the factor levels. This can then be used directly as a numeric type, but for compatibility reasons it will also be converted into a numeric type.
 
-```r
+```R
 data_fct = mi_to_numer(data_splt,levels = c("*", 0:9, letters, LETTERS, "_", ".", "-", " ", "/", "\\", ":"))
 ```
 
@@ -108,7 +108,7 @@ To prevent the trained model from losing its ability to distinguish between data
 
 The data set produced by balancing cannot be used as the test set any longer, so the ratio proportion of the original data set is divided as the test set, and this portion of the data is removed from the balanced data set, while the remaining portion is used as the training set. It should be noted, however, that the parallel parameter is only supported by Mac.
 
-```r
+```R
 data_blcd = mi_balance_data(data_fct,ratio = 0.3,parallel = F)
 ```
 
@@ -118,7 +118,7 @@ Due to the large size of the dataset, the model training time is too long, so on
 
 The first thing that needs to be done is the initial selection of a machine learning classification model, where multiple models are trained and the most suitable ones are selected; The `row_num` parameter determines the number of data items to be used, if the data is large then a portion of the data will be extracted for testing, otherwise, all of the data will be used for testing. This step requires the use of the original dataset rather than the balanced dataset;
 
-```{r echo=FALSE, message=FALSE, hide=TRUE}
+```R
 result <- mi_run_bmr(data_fct, row_num = 4000)
 benchmark <- result[1]
 score <- result[2] %>% as.data.table() %T>% print()
@@ -126,15 +126,15 @@ score <- result[2] %>% as.data.table() %T>% print()
 
 The results were used to determine the choice of models for decision trees, random forests, and XGBoost.
 
-```r
-train = data_blcd[[1]]
+```R
+train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~tidyr::replace_na(.x,0))) %>% dplyr::slice(sample(nrow(data_blcd[[1]]), 2000), preserve = TRUE) 
 test = data_blcd[[2]]
 #Decision Tree
 result_rg <- mi_train_rg(train, test, measure = msr("classif.acc"))
 #Random Forest
 result_rp <- mi_train_rp(train, test, measure = msr("classif.acc"))
 #Xgboost
-result_xgboost <- mi_train_xgb(train, test, measure = msr("classif.acc"))
+result_xgb <- mi_train_xgb(train, test, measure = msr("classif.acc"))
 ```
 
 In addition to several classical machine learning algorithms, a BP neural network is used for classification.
@@ -160,8 +160,8 @@ path_to_python <- use_python(python = "/path/to/python.exe")
 
 The meaning of parameters are (1) train, the training set; (2) test, the test set; (3) path2save, the path of the trained model, the default is NULL, not saved; (4) batch_size, the size of the training batch, the larger the training period, the shorter the training period, but the number of periods to achieve the same accuracy increases (5) epochs, the number of training periods, all samples are trained once; (6) validation_split, the proportion of data sets in the training set that are used to divide into validation sets;
 
-```r
-result_net <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
+```R
+result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
 ```
 
 #### Models Explaining:
@@ -169,14 +169,16 @@ result_net <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epoch
 `cnfs_matri` function converts the results of model training into an obfuscation matrix; the results of the model training function are used directly as input; the `ifnet` argument is a logical value, TRUE for a neural network model;
 `mi_plot_heatmap` plots the heatmap for the confusion matrix; name, the model name, the suffix when the file is stored; filepath, the path when the model is stored.
 
-```r
+```R
 matri_rg <- mi_get_confusion(result_rg)
 matri_rp <- mi_get_confusion(result_rp)
 matri_xgb <- mi_get_confusion(result_xgb)
-matri_net <- mi_get_confusion(result_net,ifnet = T)
+matri_BP <- mi_get_confusion(result_BP,ifnet = T)
 
 mi_plot_heatmap(matri_rg, name="rg",filepath = "Graph/")
 mi_plot_heatmap(matri_rp, name="rp",filepath = "Graph/")
 mi_plot_heatmap(matri_xgb, name="xgb",filepath = "Graph/")
-mi_plot_heatmap(matri_net, name="xgb",filepath = "Graph/")
+mi_plot_heatmap(matri_BP, name="BP",filepath = "Graph/")
+data("mi_data_rawID")
+mi_unify_mod(mi_data_rawID, "ID",result_rg,result_rp,result_xgb,result_BP,c_value = 0.75, pad_len = pad_len)
 ```
