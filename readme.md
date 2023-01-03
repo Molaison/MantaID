@@ -24,7 +24,7 @@ install_version("mlr3learners","0.5.1",force = T,upgrade ="never")
 install_version("mlr3tuning","0.13.1",force = T,upgrade ="never")
 install_version("mlr3","0.13.4",force = T,upgrade ="never")
 BiocManager::install("biomaRt", version = "3.16")
-install_bitbucket("Molaison/MantaID")
+devtools::install_bitbucket("Molaison/MantaID")
 ```
 
 ### Descriptions:
@@ -36,7 +36,7 @@ install_bitbucket("Molaison/MantaID")
 
 For a smaller number of ID identifications, MantaID accomplishes a more thorough approach, and it can also be utilized with MantaID API. 
 
-To identify potential databases, we first remove any mismatched databases using **regular expressions**, visit the corresponding resource page using the URL, filter the results based on the access **status code**, then retrieve **the text of the web page** and determine whether it contains information about nonexistent resources.
+To identify potential databases, we first remove any mismatched databases using regular expressions, visit the corresponding resource page using the URL, filter the results based on the access status code, then retrieve the text of the web page and determine whether it contains information about nonexistent resources.
 
 In addition, users can choose the search mode according to their personal needs, which can be divided into "quick" and "general".
 
@@ -141,19 +141,14 @@ In addition to several classical machine learning algorithms, a BP neural networ
 
 This is achieved by calling `tensorflow` via the `keras` package, so `tensorflow` needs to be installed first. 
 
-1. If you already have python installed, please skip to step 2; First, download python interpreter via https://www.python.org/downloads/release/. Please check the "add python.exe to PATH" box when installing;
+1.  To install python and tensorflow dependencies, please follow the instructions provided by Tensorflow via [TensorFlow installation](https://www.tensorflow.org/install/pip?hl=zh-cn#system-install)
 
-2. Download tensorflow packages in python.
-```bash
-pip install tensorflow
-pip install tensorflow-gpu
-```
-> If you get an error, please upgrade `pip` using the commands "python -m pip install --upgrade pip".
+2.  Use tensorflow in R. Please replace "/path/to/python.exe" with your python path.
 
-3. Use tensorflow in R. Please replace "/path/to/python.exe" with your python path.
 ```R
-install.packages("reticulate")
+install.packages(c("reticulate","tensorflow"))
 library(reticulate)
+library(tensorflow)
 path_to_python <- use_python(python = "/path/to/python.exe")
 ```
 
