@@ -107,7 +107,7 @@ mi_unify_mod <- function(data, col_id,result_rg,result_rp,result_xgb,result_BP,c
 	predictions <- predict(learner_BP, as.matrix(result))
 	response <- predictions %>% k_argmax()
 	level <- result_BP[[3]]
-	response <-factor(level[response$numpy() %>%as.numeric()+1],level)
+	response <-factor(level[response$numpy() %>%as.numeric()],level)
 
 	predict_all = response %>%
 		bind_cols(select(rp, "response")) %>%

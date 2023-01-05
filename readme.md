@@ -2,15 +2,15 @@ MantaID: a machine-learning-based tool that automatically recognizes biological 
 
 ====================
 
-### R Version Depends: 
+## R Version 
 
 ​    R (>= 4.2.0)
 
-### Imports:
+## Import
 
-​	biomaRt, caret, data.table, dplyr, ggplot2, keras,magrittr, mlr3, purrr, reshape2, scutr, stringr,tibble, tidyr, tidyselect,mlr3tuning,paradox.
+​	biomaRt, caret, data.table, dplyr, ggplot2, keras,magrittr, mlr3, purrr, reshape2, scutr, stringr,tibble, tidyr, tidyselect, mlr3tuning, paradox.
 
-### Installation:
+## Installation
 
 ```R
 if (!requireNamespace("devtools", quietly = TRUE))
@@ -27,12 +27,12 @@ BiocManager::install("biomaRt", version = "3.16")
 devtools::install_bitbucket("Molaison/MantaID")
 ```
 
-### Descriptions:
+## Description
 
 ​	The MantaID package provides a pipeline for gene ID identification based on R. Via MantaID, users can identify IDs quickly based on integrating a machine-learning-based model on a large scale. The general workflow includes data retrieving, processing and balancing, model tuning, training, and explaining. Each procedure is implemented with the functions in the R sub-fold.
 
 
-### How To Use An API:
+## How To Use An API
 
 For a smaller number of ID identifications, MantaID accomplishes a more thorough approach, and it can also be utilized with MantaID API. 
 
@@ -44,7 +44,7 @@ In addition, users can choose the search mode according to their personal needs,
 curl -X GET "http://164.92.98.237/MantaIDapi/ID_Search?ID={ID of interest}&SearchMode={mode}" -H "accept: */*"
 ```
 
-You can also perform it in R with the `GET` method. The result can be retrieved as a data frame, containing matched databases, by running the script below in R.
+You can also perform it in R with the `GET` method. The result can be retrieved as a dataframe, containing matched databases, by running the script below in R.
 
 ```R
 install.packages("httr","jsonlite")
@@ -153,16 +153,15 @@ path_to_python <- use_python(python = "/path/to/python.exe")
 ```
 
 
-The meaning of parameters are (1) train, the training set; (2) test, the test set; (3) path2save, the path of the trained model, the default is NULL, not saved; (4) batch_size, the size of the training batch, the larger the training period, the shorter the training period, but the number of periods to achieve the same accuracy increases (5) epochs, the number of training periods, all samples are trained once; (6) validation_split, the proportion of data sets in the training set that are used to divide into validation sets;
+The meaning of parameters are (1) `train`, the training set; (2) `test`, the test set; (3) `path2save`, the path of the trained model, the default is NULL, not saved; (4) `batch_size`, the size of the training batch, the larger the training period, the shorter the training period, but the number of periods to achieve the same accuracy increases (5) `epochs`, the number of training periods, all samples are trained once; (6) `validation_split`, the proportion of data sets in the training set that are used to divide into validation sets;
 
 ```R
 result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
 ```
 
-#### Models Explaining:
+#### Models Explaining
 
-`cnfs_matri` function converts the results of model training into an obfuscation matrix; the results of the model training function are used directly as input; the `ifnet` argument is a logical value, TRUE for a neural network model;
-`mi_plot_heatmap` plots the heatmap for the confusion matrix; name, the model name, the suffix when the file is stored; filepath, the path when the model is stored.
+`mi_get_confusion`, converts the results of model training into an obfuscation matrix; the results of the model training function are used directly as input; `ifnet`, a logical value, TRUE for a neural network model; `mi_plot_heatmap`, plots the heatmap for the confusion matrix; `name`, the model name, the suffix when the file is stored; `filepath`, the path when the model is stored.
 
 ```R
 matri_rg <- mi_get_confusion(result_rg)
