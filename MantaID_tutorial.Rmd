@@ -121,7 +121,7 @@ path_to_python <- use_python(python = "/path/to/python.exe")
 
 The meaning of parameters are (1) train, the training set; (2) test, the test set; (3) path2save, the path of the trained model, the default is NULL, not saved; (4) batch_size, the size of the training batch, the larger the training period, the shorter the training period, but the number of periods to achieve the same accuracy increases (5) epochs, the number of training periods, all samples are trained once; (6) validation_split, the proportion of data sets in the training set that are used to divide into validation sets;
 
-```{R include=FALSE}
+```{R message=FALSE, include=FALSE}
 result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
 ```
 
@@ -143,5 +143,6 @@ mi_plot_heatmap(matri_BP, name="BP",filepath = "Graph/")
 
 ```{r}
 data("mi_data_rawID")
+pad_len=18
 mi_unify_mod(mi_data_rawID, "ID",result_rg,result_rp,result_xgb,result_BP,c_value = 0.75, pad_len = pad_len)
 ```

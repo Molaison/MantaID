@@ -65,9 +65,9 @@ mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size
   response <- predictions %>% k_argmax()
   response <- response$numpy() %>%
     as.numeric(.)
-  levels = levels(test$class)
-  response <- levels[response] %>% factor(levels)
+  level = levels(test$class)
+  response <- level[response+1] %>% factor(level)
   prd_net <- confusionMatrix(response, test$class)
   score <- model %>% evaluate(test_set, test_target)
-  return(list(model, prd_net,levels))
+  return(list(model, prd_net,level))
 }

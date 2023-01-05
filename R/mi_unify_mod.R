@@ -2,7 +2,10 @@
 #'
 #' @param data A dataframe contains the ID column.
 #' @param col_id The name of ID column.
-#'
+#' @importFrom dplyr rename select mutate across bind_cols  summarise group_by
+#' @importFrom data.table as.data.table
+#' @importFrom keras k_argmax
+#' @export
 #' @return A dataframe.
 mi_unify_mod <- function(data, col_id,result_rg,result_rp,result_xgb,result_BP,c_value = 0.75, pad_len = 30) {
 	data <- data %>%
@@ -106,8 +109,10 @@ mi_unify_mod <- function(data, col_id,result_rg,result_rp,result_xgb,result_BP,c
 
 	predictions <- predict(learner_BP, as.matrix(result))
 	response <- predictions %>% k_argmax()
-	level <- result_BP[[3]]
-	response <-factor(level[response$numpy() %>%as.numeric()],level)
+	response <- response$numpy() %>%
+		as.numeric(.)
+	level_ = result_BP[[3]]
+	response <- level_[response+1] %>% factor(level_)
 
 	predict_all = response %>%
 		bind_cols(select(rp, "response")) %>%

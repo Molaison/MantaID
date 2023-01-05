@@ -1,3 +1,5 @@
+![](Graph/mamtaID_logo_3.png){ align:right; width:18%; height:18%;}
+
 MantaID: a machine-learning-based tool that automatically recognizes biological database IDs using machine learning. Additionally, a shiny application is offered, accessible via [MantaID (shinyapps.io)](https://molaison.shinyapps.io/MantaID/) and API via [MantaIDapi](http://164.92.98.237/MantaIDapi/__docs__/).
 
 ====================
@@ -31,6 +33,10 @@ devtools::install_bitbucket("Molaison/MantaID")
 
 ​	The MantaID package provides a pipeline for gene ID identification based on R. Via MantaID, users can identify IDs quickly based on integrating a machine-learning-based model on a large scale. The general workflow includes data retrieving, processing and balancing, model tuning, training, and explaining. Each procedure is implemented with the functions in the R sub-fold.
 
+
+## MantaID Framework
+
+![Framework](Graph/FIG1.png)
 
 ## How To Use An API
 
@@ -141,9 +147,9 @@ In addition to several classical machine learning algorithms, a BP neural networ
 
 This is achieved by calling `tensorflow` via the `keras` package, so `tensorflow` needs to be installed first. 
 
-1.  To install python and tensorflow dependencies, please follow the instructions provided by Tensorflow via [TensorFlow installation](https://www.tensorflow.org/install/pip?hl=zh-cn#system-install)
+1. To install python and tensorflow dependencies, please follow the instructions provided by Tensorflow via [TensorFlow installation](https://www.tensorflow.org/install/pip?hl=zh-cn#system-install)
 
-2.  Use tensorflow in R. Please replace "/path/to/python.exe" with your python path.
+2. Use tensorflow in R. Please replace "/path/to/python.exe" with your python path.
 
 ```R
 install.packages(c("reticulate","tensorflow"))
