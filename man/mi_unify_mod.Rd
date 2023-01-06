@@ -9,7 +9,7 @@ mi_unify_mod(
   col_id,
   result_rg,
   result_rp,
-  result_xgboost,
+  result_xgb,
   result_BP,
   c_value = 0.75,
   pad_len = 30

@@ -5,8 +5,8 @@
 #' @importFrom dplyr rename select mutate across bind_cols  summarise group_by
 #' @importFrom data.table as.data.table
 #' @importFrom keras k_argmax
-#' @export
 #' @return A dataframe.
+#' @export
 mi_unify_mod <- function(data, col_id,result_rg,result_rp,result_xgb,result_BP,c_value = 0.75, pad_len = 30) {
 	data <- data %>%
 		select(col_id, everything()) %>%

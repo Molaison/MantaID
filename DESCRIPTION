@@ -12,5 +12,5 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Suggests: 
 Depends: 
-    R (>= 4.2.0),biomaRt,caret, data.table, dplyr, ggplot2, keras,magrittr,mlr3tuning(== 0.13.1),mlr3(== 0.13.4),mlr3learners(== 0.5.1),purrr,reshape2,scutr, stringr, tibble, tidyr,tidyselect,paradox,RColorBrewer,ggcorrplot,ranger,xgboost,rpart
+    R (>= 4.2.0),biomaRt,caret, data.table, dplyr, ggplot2, keras,magrittr,mlr3tuning,mlr3,mlr3learners,purrr,reshape2,scutr, stringr, tibble, tidyr,tidyselect,paradox,RColorBrewer,ggcorrplot,ranger,xgboost,rpart
 LazyData: true

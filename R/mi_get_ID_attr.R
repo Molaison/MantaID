@@ -12,7 +12,7 @@
 mi_get_ID_attr <- function(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia") {
   ensemb_hm_dset <- useEnsembl(biomart = biomart, dataset = dataset, mirror = mirror, verbose = TRUE)
   attributes <- listAttributes(ensemb_hm_dset) %>%
-    filter(grepl(.[["description"]], pattern = "(id)|(name)", ignore.case = TRUE)) %>%
+    filter(grepl(.[["description"]], pattern = "([iI][dD])|(name)", ignore.case = TRUE)) %>%
     filter(!grepl(.[["description"]], pattern = "(end)|(start)|(description)|(probe)|(version)|(content)|(Aberrant)|(Source)|(Strain)|(Chromosome)", ignore.case = TRUE)) %>%
     filter(str_length(.[["name"]]) < 18)
 }

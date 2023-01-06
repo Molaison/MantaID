@@ -59,13 +59,13 @@ res = GET("http://164.92.98.237/MantaIDapi/ID_Search?ID={ID of interest}&SearchM
 resultDF <- fromJSON(as.data.frame(fromJSON(rawToChar(res$content)))[1,1])
 ```
 
-### MantaID Package User Instructions:
+## MantaID Package User Instructions:
 
 ```R
 library(MantaID) 
 ```
 
-#### Data Retrieving:
+### Data Retrieving:
 
 biomaRt provides an interface to R and the BioMart software suite databases (e.g.  Ensembl,  Uniprot,  HapMap), allowing direct access to information in the databases via R.
 
@@ -80,7 +80,7 @@ data_ID = mi_get_ID(flt_attri,biomart = "genes", dataset = "hsapiens_gene_ensemb
 data_ID
 ```
 
-#### Data Processing:
+### Data Processing:
 
 Sometimes the data obtained is an ID mapping table, with each row corresponding to an ID entity, and each column corresponds to a different database. So, do the training you need to reorganize the table and remove invalid values. Use the 'mi_clean_data' function to do this. For example:
 
@@ -107,9 +107,9 @@ It is necessary to convert the existing feature columns to factor types because 
 data_fct = mi_to_numer(data_splt,levels = c("*", 0:9, letters, LETTERS, "_", ".", "-", " ", "/", "\\", ":"))
 ```
 
-#### Data Balancing:
+### Data Balancing:
 
-To prevent the trained model from losing its ability to distinguish between databases with small numbers of IDs, it is necessary to balance the data. On the one hand, the smote method is used to oversample databases with small numbers of IDs to increase the data density, and on the other hand, databases with large numbers of IDs are undersampled through random sampling to reduce the number. 
+To prevent the trained model from losing its ability to distinguish between databases with small numbers of IDs, it is necessary to balance the data. On the one hand, the smote method is used to oversample databases with small numbers of IDs to increase the data density, and on the other hand, databases with large numbers of IDs are undersampled through random sampling to reduce the number.
 
 The data set produced by balancing cannot be used as the test set any longer, so the ratio proportion of the original data set is divided as the test set, and this portion of the data is removed from the balanced data set, while the remaining portion is used as the training set. It should be noted, however, that the parallel parameter is only supported by Mac.
 
@@ -117,7 +117,7 @@ The data set produced by balancing cannot be used as the test set any longer, so
 data_blcd = mi_balance_data(data_fct,ratio = 0.3,parallel = F)
 ```
 
-#### Models Training:
+### Models Training:
 
 Due to the large size of the dataset, the model training time is too long, so only a certain number of samples are taken for training; where the training set and the dataset are divided by calling the partition function, which exists as an index of the original data; three models are used for benchmark training, namely decision tree, random forest and plain Bayes, and resampling is performed using the five-fold crossover method; benchmark() The training was performed, and the training and test sets were evaluated separately after training (costs&ce); accepts four parameters, all of which have default parameters except data; data is the incoming data, where the target column (i.e. the column where the ID database name is located) must have the column name "class", and all columns are of type factor;
 
@@ -164,7 +164,7 @@ The meaning of parameters are (1) `train`, the training set; (2) `test`, the tes
 result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
 ```
 
-#### Models Explaining
+### Models Explaining
 
 `mi_get_confusion`, converts the results of model training into an obfuscation matrix; the results of the model training function are used directly as input; `ifnet`, a logical value, TRUE for a neural network model; `mi_plot_heatmap`, plots the heatmap for the confusion matrix; `name`, the model name, the suffix when the file is stored; `filepath`, the path when the model is stored.
 
@@ -178,6 +178,9 @@ mi_plot_heatmap(matri_rg, name="rg",filepath = "Graph/")
 mi_plot_heatmap(matri_rp, name="rp",filepath = "Graph/")
 mi_plot_heatmap(matri_xgb, name="xgb",filepath = "Graph/")
 mi_plot_heatmap(matri_BP, name="BP",filepath = "Graph/")
+```
+
+```R
 data("mi_data_rawID")
-mi_unify_mod(mi_data_rawID, "ID",result_rg,result_rp,result_xgb,result_BP,c_value = 0.75, pad_len = pad_len)
+MantaID:::mi_unify_mod(mi_data_rawID, "ID",result_rg,result_rp,result_xgb,result_BP,c_value = 0.75, pad_len = pad_len)
 ```
