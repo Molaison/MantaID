@@ -10,12 +10,11 @@
 #' @return A tibble with pad_len+1 column.
 #' @export
 mi_split_col <- function(data, cores = NULL, pad_len = 10) {
-
-  core_max <- detectCores(logical = FALSE)%/%2
+  core_max <- detectCores(logical = FALSE) %/% 2
   if (is.null(cores)) {
-    cl <- makeCluster(core_max,port = 1223)
+    cl <- makeCluster(core_max, port = 1223)
   } else {
-    cl <- makeCluster(cores,port = 1223)
+    cl <- makeCluster(cores, port = 1223)
   }
   mi_split_str <- function(str, pad_len) {
     str %>%
@@ -33,5 +32,5 @@ mi_split_col <- function(data, cores = NULL, pad_len = 10) {
     unlist() %>%
     matrix(byrow = TRUE, ncol = pad_len) %>%
     bind_cols(data[, 2]) %>%
-    set_names(c(str_c("pos", 1:pad_len),"class"))
+    set_names(c(str_c("pos", 1:pad_len), "class"))
 }

@@ -14,9 +14,9 @@
 #' @return A tibble with two columns("ID" and "class")
 #' @examples
 #' data <- tibble::tibble(
-#' "class1" = c("A","B","C","D"),
-#' 'class2' = c("E","F","G","H"),
-#' 'class3' = c("L","M","-","O")
+#'   "class1" = c("A", "B", "C", "D"),
+#'   "class2" = c("E", "F", "G", "H"),
+#'   "class3" = c("L", "M", "-", "O")
 #' )
 #' mi_clean_data(data)
 mi_clean_data <- function(data, cols = everything(), placeholder = c("-")) {

@@ -30,14 +30,16 @@ mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size
     select(-class) %>%
     as.matrix()
 
-  train_target <- train$class %>% factor() %>%
-    as.numeric() %>%
-      to_categorical()
-  train_target = train_target[,-c(1)]
-  test_target <- test$class %>%factor() %>%
+  train_target <- train$class %>%
+    factor() %>%
     as.numeric() %>%
     to_categorical()
-  test_target=test_target[,-c(1)]
+  train_target <- train_target[, -c(1)]
+  test_target <- test$class %>%
+    factor() %>%
+    as.numeric() %>%
+    to_categorical()
+  test_target <- test_target[, -c(1)]
   model <- keras_model_sequential()
   model %>%
     layer_dense(units = 40, input_shape = ncol(train_set)) %>%
@@ -58,16 +60,16 @@ mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size
     epochs = epochs, batch_size = batch_size,
     validation_split = 0.3, verbose = 2
   )
-  if(!is.null(path2save)){
+  if (!is.null(path2save)) {
     save_model_tf(model, str_c(path2save, "/result_net"))
   }
   predictions <- predict(model, test_set)
   response <- predictions %>% k_argmax()
   response <- response$numpy() %>%
     as.numeric(.)
-  level = levels(test$class)
-  response <- level[response+1] %>% factor(level)
+  level <- levels(test$class)
+  response <- level[response + 1] %>% factor(level)
   prd_net <- confusionMatrix(response, test$class)
   score <- model %>% evaluate(test_set, test_target)
-  return(list(model, prd_net,level))
+  return(list(model, prd_net, level))
 }

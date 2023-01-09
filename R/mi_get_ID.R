@@ -13,7 +13,7 @@
 #' @return A `tibble` dataframe.
 #' @export
 mi_get_ID <- function(attributes, biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia") {
-    Ensembl <- useEnsembl(biomart = biomart, dataset = dataset, mirror = mirror, verbose = TRUE)
+  Ensembl <- useEnsembl(biomart = biomart, dataset = dataset, mirror = mirror, verbose = TRUE)
   out <- vector("list", length = nrow(attributes))
   for (i in 1:nrow(attributes)) {
     try_result <- try({
@@ -26,11 +26,16 @@ mi_get_ID <- function(attributes, biomart = "genes", dataset = "hsapiens_gene_en
     Sys.sleep(0.5)
   }
   to_2col <- function(df) {
-    df %>%
+    df <- df %>%
       as_tibble() %>%
       mutate(class = colnames(.)[1]) %>%
       rename(ID = 1) %>%
       mutate(across(.cols = 1, .fns = as.character))
+    if(any(str_detect(pull(df,ID)," "))){
+        return(tibble(ID=NA,class=NA))
+    }else{
+      return(df)
+    }
   }
-  map_dfr(out, .f = to_2col)
+  map_dfr(out, .f = to_2col) %>% drop_na()
 }

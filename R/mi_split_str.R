@@ -5,9 +5,9 @@
 #' @export
 #' @return Splited character vector.
 #' @examples
-#' string_test = "Good Job"
-#' length = 15
-#' mi_split_str(string_test,length)
+#' string_test <- "Good Job"
+#' length <- 15
+#' mi_split_str(string_test, length)
 mi_split_str <- function(str, pad_len) {
   str %>%
     as.character() %>%

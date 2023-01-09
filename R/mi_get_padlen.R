@@ -7,10 +7,10 @@
 #' @examples
 #' data(mi_data_rawID)
 #' mi_get_padlen(mi_data_rawID)
-mi_get_padlen <- function(data){
+mi_get_padlen <- function(data) {
   data %>%
-  pull("ID") %>%
-  map(nchar) %>%
-  unlist() %>%
-  max()
+    pull("ID") %>%
+    map(nchar) %>%
+    unlist() %>%
+    max()
 }

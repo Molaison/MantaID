@@ -1,0 +1,16 @@
+File Name: Abyssibacter_profundi_genomic_refseq.fna.gz
+Organism Name: Abyssibacter_profundi
+Database: NCBI refseq
+URL: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/003/151/135/GCF_003151135.1_ASM315113v1/GCF_003151135.1_ASM315113v1_genomic.fna.gz
+Download_Date: Sat Jan  7 18:13:23 2023
+refseq_category: representative genome
+assembly_accession: GCF_003151135.1
+bioproject: PRJNA224116
+biosample: SAMN09010082
+taxid: 2182787
+infraspecific_name: strain=OUC007
+version_status: latest
+release_type: Major
+genome_rep: Full
+seq_rel_date: 2018-05-24
+submitter: Ocean University of China
