@@ -22,6 +22,7 @@ library(remotes)
 install_version("mlr3learners","0.5.1",force = T,upgrade ="never")
 install_version("mlr3tuning","0.13.1",force = T,upgrade ="never")
 install_version("mlr3","0.13.4",force = T,upgrade ="never")
+library(BiocManager)
 BiocManager::install("biomaRt", version = "3.16")
 ```
 
