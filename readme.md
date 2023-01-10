@@ -12,9 +12,8 @@ A machine-learning-based tool that automatically recognizes biological database 
 
 ​​biomaRt, ggplot2, caret, data.table, dplyr, keras, magrittr, mlr3, purrr, reshape2, scutr, stringr,tibble, tidyr, tidyselect, paradox.
 
-Note: Run the following code for installing biomaRt, mlr3, mlr3tuning packages of specific version.
-
 ```R
+#Note: Run the following code for installing biomaRt, mlr3, mlr3tuning packages of specific version.
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager",repos = "http://cran.us.r-project.org")
 if (!requireNamespace("remotes", quietly = TRUE))
@@ -77,10 +76,10 @@ library(MantaID)
 
 ### Data Retrieving
 
-Searche public databases for and downloads ID datasets. Here we choose to use the human genome dataset, Mirror choose asia mirror (depending on the region).
-* `mi_get_ID_attr`: Get the attributes of the dataset associated with the ID. 
-* `flt_attri`: By looking at the dataset to select the dataset of interest. 
-* `mi get ID`: Compile the findings into a large table.
+Searche public databases for and downloads ID datasets. Here we choose to use the human genome dataset, Mirror choose asia mirror (depending on the region).     
+`mi_get_ID_attr`: Get the attributes of the dataset associated with the ID.       
+`flt_attri`: By looking at the dataset to select the dataset of interest.        
+`mi get ID`: Compile the findings into a large table.
 
 ```R
 attributes = mi_get_ID_attr(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
@@ -91,11 +90,11 @@ data_ID
 
 ### Data Processing
 
-Convert ID data into the format required for training. 
-* `mi_clean_data`: Do the training you need to reorganize the table and remove invalid values. 
-* `mi_get_padlen`: Get max length of ID data.
-* `mi_split_col`: Cut the string of ID column character by character and divide it into multiple columns.
-* `mi_to_numer`: Convert data to numeric, and for the ID column convert with fixed levels.
+Convert ID data into the format required for training.        
+`mi_clean_data`: Do the training you need to reorganize the table and remove invalid values.        
+`mi_get_padlen`: Get max length of ID data.        
+`mi_split_col`: Cut the string of ID column character by character and divide it into multiple columns.           
+`mi_to_numer`: Convert data to numeric, and for the ID column convert with fixed levels.
 
 ```R
 data <- tibble::tibble(
@@ -112,8 +111,8 @@ data_fct = mi_to_numer(data_splt,levels = c("*", 0:9, letters, LETTERS, "_", "."
 
 ### Data Balancing
 
-Balance the training datasets' minority and majority classes. 
-* `mi_balance_data`: Prevent the trained model from losing its ability to distinguish between databases with small numbers of IDs.
+Balance the training datasets' minority and majority classes.          
+`mi_balance_data`: Prevent the trained model from losing its ability to distinguish between databases with small numbers of IDs.
 
 ```R
 data_blcd = mi_balance_data(data_fct,ratio = 0.3,parallel = F)
@@ -121,8 +120,8 @@ data_blcd = mi_balance_data(data_fct,ratio = 0.3,parallel = F)
 
 ### Models Training
 
-Due to the large size of the dataset, the model training time is too long, so only a certain number of samples are taken for training.
-* `mi_run_bmr`: Compare classification models with small samples. 
+Due to the large size of the dataset, the model training time is too long, so only a certain number of samples are taken for training.      
+`mi_run_bmr`: Compare classification models with small samples. 
 
 ```R
 result <- mi_run_bmr(data_fct, row_num = 4000)
@@ -130,10 +129,10 @@ benchmark <- result[1]
 score <- result[2] %>% as.data.table() %T>% print()
 ```
 
-The results were used to determine the choice of models for decision tree, random forest, and XGBoost.
-* `mi_train_rg`: Random Forest Model Training.
-* `mi_train_rp`: Classification tree model training.
-* `mi_train_xgb`: Xgboost model training.
+The results were used to determine the choice of models for decision tree, random forest, and Xgboost.        
+`mi_train_rg`: Random Forest Model Training.          
+`mi_train_rp`: Classification tree model training.         
+`mi_train_xgb`: Xgboost model training.
 
 ```R
 train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~tidyr::replace_na(.x,0))) %>% dplyr::slice(sample(nrow(data_blcd[[1]]), 2000), preserve = TRUE) 
@@ -160,7 +159,7 @@ library(reticulate)
 path_to_python <- use_python(python = "/path/to/python.exe")
 ```
 
-* `mi_train_BP`: Train a three layers neural network model.
+`mi_train_BP`: Train a three layers neural network model.
 
 ```R
 result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
@@ -168,10 +167,10 @@ result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs
 
 ### Models Explaining
 
-The heatmap of the model and confusion matrix is returned after training.
-* `mi_get_confusion`: Convert the results of model training into an obfuscation matrix.
-* `mi_plot_heatmap`: Plot the heatmap for the confusion matrix.
-* `mi_unify_mod`: Predict with four models and unify results by the sub-model's specificity score to the four possible classes.
+The heatmap of the model and confusion matrix is returned after training.        
+`mi_get_confusion`: Convert the results of model training into an obfuscation matrix.          
+`mi_plot_heatmap`: Plot the heatmap for the confusion matrix.        
+`mi_unify_mod`: Predict with four models and unify results by the sub-model's specificity score to the four possible classes.
 
 ```R
 matri_rg <- mi_get_confusion(result_rg)
