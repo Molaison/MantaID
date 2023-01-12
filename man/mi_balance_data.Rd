@@ -23,6 +23,6 @@ Most classes adopt random undersampling, while a few classes adopt smote method 
 }
 \examples{
 library(dplyr)
-data = rename(iris,class =Species)
+data <- rename(iris, class = Species)
 mi_balance_data(data)
 }

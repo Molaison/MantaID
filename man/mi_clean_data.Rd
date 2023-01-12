@@ -21,9 +21,9 @@ Reshape data and delete meaningless rows.
 }
 \examples{
 data <- tibble::tibble(
-"class1" = c("A","B","C","D"),
-'class2' = c("E","F","G","H"),
-'class3' = c("L","M","-","O")
+  "class1" = c("A", "B", "C", "D"),
+  "class2" = c("E", "F", "G", "H"),
+  "class3" = c("L", "M", "-", "O")
 )
 mi_clean_data(data)
 }

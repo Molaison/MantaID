@@ -18,7 +18,7 @@ Splited character vector.
 Split the string into individual characters and complete the character vector to the maximum length.
 }
 \examples{
-string_test = "Good Job"
-length = 15
-mi_split_str(string_test,length)
+string_test <- "Good Job"
+length <- 15
+mi_split_str(string_test, length)
 }
