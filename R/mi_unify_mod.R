@@ -120,11 +120,11 @@ mi_unify_mod <- function(data, col_id, result_rg, result_rp, result_xgb, result_
     bind_cols(select(rp, "response")) %>%
     bind_cols(select(rg, "response")) %>%
     bind_cols(select(xgb, "response")) %>%
-    set_names(c("Deeplearn", "DecisionTree", "RandomForest", "Xgboost"))
+    set_names(c("BPNN", "DT", "RF", "XGB"))
   major_result <- pmap(predict_all, major) %>%
     unlist() %>%
     bind_cols(predict_all) %>%
-    set_names(c("Integrated", "Deeplearn", "DecisionTree", "RandomForest", "Xgboost"))
+    set_names(c("Integrated", "BPNN", "DT", "RF", "XGB"))
 
   return(major_result)
 }
