@@ -130,20 +130,26 @@ benchmark <- result[1]
 score <- result[2] %>% as.data.table() %T>% print()
 ```
 
-The results were used to determine the choice of models for decision tree, random forest, and Xgboost.        
-`mi_train_rg`: Random Forest Model Training.          
-`mi_train_rp`: Classification tree model training.         
+The results were used to determine the choice of models for decision tree, random forest, and Xgboost.    
+`mi_tune_rp`: Tune the decision tree model by hyperband.     
+`mi_train_rp`: Decision tree model training.     
+`mi_tune_rg`: Tune the random forest model by hyperband.        
+`mi_train_rg`: Random forest model Training.        
+`mi_tune_xgb`: Tune the Xgboost model by hyperband.      
 `mi_train_xgb`: Xgboost model training.
 
 ```R
 train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~tidyr::replace_na(.x,0))) %>% dplyr::slice(sample(nrow(data_blcd[[1]]), 2000), preserve = TRUE) 
 test = data_blcd[[2]]
 #Decision Tree
-result_rg <- mi_train_rg(train, test, measure = msr("classif.acc"))
+inst_rp <- mi_tune_rp(train, test)
+result_rp <- mi_train_rp(train, test, measure = msr("classif.acc"), instance = inst_rp[[1]])
 #Random Forest
-result_rp <- mi_train_rp(train, test, measure = msr("classif.acc"))
+inst_rg <- mi_tune_rg(train, test)
+result_rg <- mi_train_rg(train, test, measure = msr("classif.acc"), instance = inst_rg[[1]])
 #Xgboost
-result_xgb <- mi_train_xgb(train, test, measure = msr("classif.acc"))
+inst_xgb <- mi_tune_xgb(train, test)
+result_xgb <- mi_train_xgb(train, test, measure = msr("classif.acc"), instance = inst_xgb[[1]])
 ```
 
 In addition to several classical machine learning algorithms, a BP neural network is used for classification.
@@ -174,13 +180,13 @@ The heatmap of the model and confusion matrix is returned after training.
 `mi_unify_mod`: Predict with four models and unify results by the sub-model's specificity score to the four possible classes.
 
 ```R
-matri_rg <- mi_get_confusion(result_rg)
 matri_rp <- mi_get_confusion(result_rp)
+matri_rg <- mi_get_confusion(result_rg)
 matri_xgb <- mi_get_confusion(result_xgb)
 matri_BP <- mi_get_confusion(result_BP,ifnet = T)
 
-mi_plot_heatmap(matri_rg, name="rg",filepath = "Graph/")
 mi_plot_heatmap(matri_rp, name="rp",filepath = "Graph/")
+mi_plot_heatmap(matri_rg, name="rg",filepath = "Graph/")
 mi_plot_heatmap(matri_xgb, name="xgb",filepath = "Graph/")
 mi_plot_heatmap(matri_BP, name="BP",filepath = "Graph/")
 data("mi_data_rawID")
