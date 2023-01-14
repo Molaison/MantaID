@@ -13,8 +13,11 @@
 #' @return A `tibble` dataframe.
 #' @export
 mi_get_ID <- function(attributes, biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia") {
+  #连接到选定的BioMart数据库和由Ensemble托管的数据集
   Ensembl <- useEnsembl(biomart = biomart, dataset = dataset, mirror = mirror, verbose = TRUE)
+  #将attributes转换成列表
   out <- vector("list", length = nrow(attributes))
+  #根据attributes的name检索ID，如果在检索过程中出现错误，则睡眠0.5秒
   for (i in 1:nrow(attributes)) {
     try_result <- try({
       out[[i]] <- getBM(attributes = unique(attributes[["name"]])[i], mart = Ensembl)

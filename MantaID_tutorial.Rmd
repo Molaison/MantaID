@@ -1,5 +1,5 @@
 ---
-title: 'MantaID':a machine-learning based tool to automate the identification of biological database IDs
+title: 'MantaID': A machine-learning-based tool to automate the identification of biological database IDs
 author: Zeng Zhengpeng
 date: 2022/5/1
 output: rmdformats::material
@@ -8,11 +8,12 @@ editor_options:
     wrap: 72
 ---
 
-### Installation
+## Import
+
+biomaRt, ggplot2, caret, data.table, dplyr, keras, magrittr, mlr3, purrr, reshape2, scutr, stringr,tibble, tidyr, tidyselect, paradox.
 
 ```{R}
-if (!requireNamespace("devtools", quietly = TRUE))
-    install.packages("devtools",repos = "http://cran.us.r-project.org")
+#Note: Run the following code for installing biomaRt, mlr3, mlr3tuning packages of specific version.
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager",repos = "http://cran.us.r-project.org")
 if (!requireNamespace("remotes", quietly = TRUE))
@@ -21,9 +22,16 @@ library(remotes)
 install_version("mlr3learners","0.5.1",force = T,upgrade ="never")
 install_version("mlr3tuning","0.13.1",force = T,upgrade ="never")
 install_version("mlr3","0.13.4",force = T,upgrade ="never")
+library(BiocManager)
 BiocManager::install("biomaRt", version = "3.16")
+```
+
+## Installation
+
+```{R}
+if (!requireNamespace("devtools", quietly = TRUE))
+    install.packages("devtools")
 install_bitbucket("Molaison/MantaID")
-library(MantaID) 
 ```
 
 ### Data Retrieving
@@ -35,8 +43,10 @@ Set the BioMart dataset to be connected to via biomaRt. Here we choose to use th
 First, use 'mi_get_ID_attr' function to get the attributes of the dataset associated with the ID. Then utilize 'flt_attri' function further by looking at the dataset to select the dataset of interest. Finally, the incoming attributes are automatically retrieved by the 'mi_get_ID' function, which then compiles the findings into a large table.
 
 ```{R}
+#在BioMart数据库中选择符合条件的人类基因的Ensemble数据集
 attributes = mi_get_ID_attr(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
-flt_attri = attributes #%>% slice(1,2,6,7)
+#选择第1，2，6，7行的attributes
+flt_attri = attributes %>% dplyr::slice(1,2,6,7)
 data_ID = mi_get_ID(flt_attri,biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
 data_ID
 ```
@@ -54,7 +64,7 @@ data <- tibble::tibble(
 data_ID_clean = mi_clean_data(data,placeholder="-")
 ```
 
-The features of ID, in contrast to other data, are the placements of the constituent characters. Since it is impossible to train on only one column of "ID," it is split into a single character vector to extract the features, and the vector is filled with "\*" up to the maximum ID to guarantee consistent data dimension.
+The features of ID, in contrast to other data, are the placements of the constituent characters. Since it is impossible to train on only one column of "ID," it is split into a single character vector to extract the features, and the vector is filled with "*" up to the maximum ID to guarantee consistent data dimension.
 
 ```{R}
 pad_len = mi_get_padlen(data_ID)
