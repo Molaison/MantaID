@@ -131,7 +131,7 @@ score <- result[2] %>% as.data.table() %T>% print()
 ```
 
 The results were used to determine the choice of models for decision tree, random forest, and Xgboost.    
-`mi_tune_rp`: Tune the Decision Tree model by hyperband.     
+`mi_tune_rp`: Tune the decision tree model by hyperband.     
 `mi_train_rp`: Decision tree model training.     
 `mi_tune_rg`: Tune the random forest model by hyperband.        
 `mi_train_rg`: Random forest model Training.        
