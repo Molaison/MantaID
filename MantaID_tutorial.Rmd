@@ -96,11 +96,14 @@ The results were used to determine the choice of models for decision trees, rand
 train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~tidyr::replace_na(.x,0))) %>% dplyr::slice(sample(nrow(data_blcd[[1]]), 2000), preserve = TRUE) 
 test = data_blcd[[2]]
 #Decision Tree
-result_rg <- mi_train_rg(train, test, measure = msr("classif.acc"))
+inst_rg <- mi_tune_rg(train, test)
+result_rg <- mi_train_rg(train, test, measure = msr("classif.acc"), instance = inst_rg[[1]])
 #Random Forest
-result_rp <- mi_train_rp(train, test, measure = msr("classif.acc"))
+inst_rp <- mi_tune_rp(train, test)
+result_rp <- mi_train_rp(train, test, measure = msr("classif.acc"), instance = inst_rp[[1]])
 #Xgboost
-result_xgb <- mi_train_xgb(train, test, measure = msr("classif.acc"))
+inst_xgb <- mi_tune_xgb(train, test)
+result_xgb <- mi_train_xgb(train, test, measure = msr("classif.acc"), instance = inst_xgb[[1]])
 ```
 
 In addition to several classical machine learning algorithms, a BP neural network is used for classification.
