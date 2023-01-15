@@ -10,7 +10,7 @@ R (>= 4.2.0)
 
 ## Import
 
-biomaRt, ggplot2, caret, data.table, dplyr, keras, magrittr, mlr3, purrr, reshape2, scutr, stringr,tibble, tidyr, tidyselect, paradox.
+biomaRt, ggplot2, caret, data.table, dplyr, keras, magrittr, mlr3, purrr, reshape2, scutr, stringr, tibble, tidyr, tidyselect, paradox.
 
 ```R
 #Note: Run the following code for installing biomaRt, mlr3, mlr3tuning packages of specific version.
