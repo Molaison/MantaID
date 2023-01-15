@@ -177,7 +177,7 @@ result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs
 The heatmap of the model and confusion matrix is returned after training.        
 `mi_get_confusion`: Plot confusion matrix with the results obtained from trained model.          
 `mi_plot_heatmap`: Plot the heatmap for the confusion matrix.        
-`mi_unify_mod`: Predict with four models and unify results by the sub-model's specificity score to the four possible classes.
+`mi_unify_mod`: Predict with four models and unify results by the submodels' specificity score.
 
 ```R
 matri_rp <- mi_get_confusion(result_rp)
