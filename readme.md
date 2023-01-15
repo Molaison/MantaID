@@ -77,9 +77,9 @@ library(MantaID)
 
 ### Data Retrieving
 
-Searche public databases for and downloads ID datasets. Here we choose to use the human genome dataset, Mirror choose asia mirror (depending on the region).     
+Search public databases for and download ID datasets. Here we choose to use the human genome dataset, Mirror choose asia mirror (depending on the region).     
 `mi_get_ID_attr`: Get the attributes of the dataset associated with the ID.       
-`flt_attri`: By looking at the dataset to select the dataset of interest.        
+`flt_attri`: Select the dataset of interest by looking at the dataset.        
 `mi get ID`: Compile the findings into a large table.
 
 ```R
@@ -94,8 +94,8 @@ data_ID
 Convert ID data into the format required for training.        
 `mi_clean_data`: Do the training you need to reorganize the table and remove invalid values.        
 `mi_get_padlen`: Get max length of ID data.        
-`mi_split_col`: Cut the string of ID column character by character and divide it into multiple columns.           
-`mi_to_numer`: Convert data to numeric, and for the ID column convert with fixed levels.
+`mi_split_col`: Split the string of the ID column word by word into multiple columns.          
+`mi_to_numer`: Convert the splitted ID to a factor in a fixed mapping and then to a numeric type.
 
 ```R
 data <- tibble::tibble(
@@ -121,7 +121,7 @@ data_blcd = mi_balance_data(data_fct,ratio = 0.3,parallel = F)
 
 ### Models Training
 
-Due to the large size of the dataset, the model training time is too long, so only a certain number of samples are taken for training.      
+Train the models using the divided training set.     
 `mi_run_bmr`: Compare classification models with small samples. 
 
 ```R
@@ -130,13 +130,13 @@ benchmark <- result[1]
 score <- result[2] %>% as.data.table() %T>% print()
 ```
 
-The results were used to determine the choice of models for decision tree, random forest, and Xgboost.    
-`mi_tune_rp`: Tune the decision tree model by hyperband.     
-`mi_train_rp`: Decision tree model training.     
-`mi_tune_rg`: Tune the random forest model by hyperband.        
-`mi_train_rg`: Random forest model Training.        
-`mi_tune_xgb`: Tune the Xgboost model by hyperband.      
-`mi_train_xgb`: Xgboost model training.
+The results were used to determine the choice of models for Decision Tree (DT), Random Forest (RF), and eXtreme Gradient Boosting (XGBoost).    
+`mi_tune_rp`: Tune the DT model by hyperband.     
+`mi_train_rp`: Train the DT model.     
+`mi_tune_rg`: Tune the RF model by hyperband.        
+`mi_train_rg`: Train the RF model.        
+`mi_tune_xgb`: Tune the XGBoost model by hyperband.      
+`mi_train_xgb`: Train the XGBoost model.
 
 ```R
 train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~tidyr::replace_na(.x,0))) %>% dplyr::slice(sample(nrow(data_blcd[[1]]), 2000), preserve = TRUE) 
@@ -166,7 +166,7 @@ library(reticulate)
 path_to_python <- use_python(python = "/path/to/python.exe")
 ```
 
-`mi_train_BP`: Train a three layers neural network model.
+`mi_train_BP`: Train the BPNN model with a three-layers neural network.
 
 ```R
 result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
