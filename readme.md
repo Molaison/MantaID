@@ -6,11 +6,11 @@ A machine-learning-based tool that automatically recognizes biological database 
 
 ## R Version 
 
-​    R (>= 4.2.0)
+R (>= 4.2.0)
 
 ## Import
 
-​​biomaRt, ggplot2, caret, data.table, dplyr, keras, magrittr, mlr3, purrr, reshape2, scutr, stringr,tibble, tidyr, tidyselect, paradox.
+biomaRt, ggplot2, caret, data.table, dplyr, keras, magrittr, mlr3, purrr, reshape2, scutr, stringr,tibble, tidyr, tidyselect, paradox.
 
 ```R
 #Note: Run the following code for installing biomaRt, mlr3, mlr3tuning packages of specific version.
@@ -42,7 +42,7 @@ options(download.file.method = "wininet")
 
 ## Description
 
-​	The MantaID package provides a pipeline for gene ID identification based on R. Via MantaID, users can identify IDs quickly based on integrating a machine-learning-based model on a large scale. The general workflow includes data retrieving, processing and balancing, model tuning, training, and explaining. Each procedure is implemented with the functions in the R sub-fold.
+The MantaID package provides a pipeline for gene ID identification based on R. Via MantaID, users can identify IDs quickly based on integrating a machine-learning-based model on a large scale. The general workflow includes data retrieving, processing and balancing, model tuning, training, and explaining. Each procedure is implemented with the functions in the R sub-fold.
 
 
 ## MantaID Framework
@@ -152,7 +152,7 @@ inst_xgb <- mi_tune_xgb(train, test)
 result_xgb <- mi_train_xgb(train, test, measure = msr("classif.acc"), instance = inst_xgb[[1]])
 ```
 
-In addition to several classical machine learning algorithms, a BP neural network is used for classification.
+In addition to several classical machine learning algorithms, a Back Propagation Neural Network (BPNN) is used for classification.
 
 This is achieved by calling `tensorflow` via the `keras` package, so `tensorflow` needs to be installed first. 
 
@@ -175,7 +175,7 @@ result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs
 ### Models Explaining
 
 The heatmap of the model and confusion matrix is returned after training.        
-`mi_get_confusion`: Convert the results of model training into an obfuscation matrix.          
+`mi_get_confusion`: Plot confusion matrix with the results obtained from trained model.          
 `mi_plot_heatmap`: Plot the heatmap for the confusion matrix.        
 `mi_unify_mod`: Predict with four models and unify results by the sub-model's specificity score to the four possible classes.
 
