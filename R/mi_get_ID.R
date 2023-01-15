@@ -28,17 +28,20 @@ mi_get_ID <- function(attributes, biomart = "genes", dataset = "hsapiens_gene_en
     }
     Sys.sleep(0.5)
   }
+  #将tibble的第一列命名为ID，并将里面的元素转换成字符,第二列命名为class
   to_2col <- function(df) {
     df <- df %>%
       as_tibble() %>%
       mutate(class = colnames(.)[1]) %>%
       rename(ID = 1) %>%
       mutate(across(.cols = 1, .fns = as.character))
+    #如果存在匹配不到ID字符的情况，则tibble对应位置的ID为NA，class为NA
     if(any(str_detect(pull(df,ID)," "))){
         return(tibble(ID=NA,class=NA))
     }else{
       return(df)
     }
   }
+  #批量读取数据文件并合并（列名相同），去除ID和class都缺失的行
   map_dfr(out, .f = to_2col) %>% drop_na()
 }
