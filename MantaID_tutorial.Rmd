@@ -23,7 +23,7 @@ install_version("mlr3learners","0.5.1",force = T,upgrade ="never")
 install_version("mlr3tuning","0.13.1",force = T,upgrade ="never")
 install_version("mlr3","0.13.4",force = T,upgrade ="never")
 library(BiocManager)
-BiocManager::install("biomaRt", version = "3.16")
+BiocManager::install("biomaRt", version = "3.16",force = TRUE)
 ```
 
 ## Installation
@@ -47,6 +47,7 @@ First, use 'mi_get_ID_attr' function to get the attributes of the dataset associ
 attributes = mi_get_ID_attr(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
 #选择第1，2，6，7行的attributes
 flt_attri = attributes %>% dplyr::slice(1,2,6,7)
+#自动检索传入的attributes,并将结果处理为一个长表
 data_ID = mi_get_ID(flt_attri,biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
 data_ID
 ```

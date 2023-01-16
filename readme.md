@@ -6,11 +6,11 @@ A machine-learning-based tool that automatically recognizes biological database 
 
 ## R Version 
 
-​    R (>= 4.2.0)
+R (>= 4.2.0)
 
 ## Import
 
-​​biomaRt, ggplot2, caret, data.table, dplyr, keras, magrittr, mlr3, purrr, reshape2, scutr, stringr,tibble, tidyr, tidyselect, paradox.
+biomaRt, ggplot2, caret, data.table, dplyr, keras, magrittr, mlr3, purrr, reshape2, scutr, stringr, tibble, tidyr, tidyselect, paradox.
 
 ```R
 #Note: Run the following code for installing biomaRt, mlr3, mlr3tuning packages of specific version.
@@ -23,7 +23,7 @@ install_version("mlr3learners","0.5.1",force = T,upgrade ="never")
 install_version("mlr3tuning","0.13.1",force = T,upgrade ="never")
 install_version("mlr3","0.13.4",force = T,upgrade ="never")
 library(BiocManager)
-BiocManager::install("biomaRt", version = "3.16")
+BiocManager::install("biomaRt", version = "3.16",force = TRUE)
 ```
 
 ## Installation
@@ -31,6 +31,7 @@ BiocManager::install("biomaRt", version = "3.16")
 ```R
 if (!requireNamespace("devtools", quietly = TRUE))
     install.packages("devtools")
+library(devtools)
 install_bitbucket("Molaison/MantaID")
 ```
 
@@ -42,7 +43,7 @@ options(download.file.method = "wininet")
 
 ## Description
 
-​	The MantaID package provides a pipeline for gene ID identification based on R. Via MantaID, users can identify IDs quickly based on integrating a machine-learning-based model on a large scale. The general workflow includes data retrieving, processing and balancing, model tuning, training, and explaining. Each procedure is implemented with the functions in the R sub-fold.
+The MantaID package provides a pipeline for gene ID identification based on R. Via MantaID, users can identify IDs quickly based on integrating a machine-learning-based model on a large scale. The general workflow includes data retrieving, processing and balancing, model tuning, training, and explaining. Each procedure is implemented with the functions in the R sub-fold.
 
 
 ## MantaID Framework
@@ -77,9 +78,9 @@ library(MantaID)
 
 ### Data Retrieving
 
-Searche public databases for and downloads ID datasets. Here we choose to use the human genome dataset, Mirror choose asia mirror (depending on the region).     
+Search public databases for and download ID datasets. Here we choose to use the human genome dataset, Mirror choose asia mirror (depending on the region).     
 `mi_get_ID_attr`: Get the attributes of the dataset associated with the ID.       
-`flt_attri`: By looking at the dataset to select the dataset of interest.        
+`flt_attri`: Select the dataset of interest by looking at the dataset.        
 `mi get ID`: Compile the findings into a large table.
 
 ```R
@@ -94,8 +95,8 @@ data_ID
 Convert ID data into the format required for training.        
 `mi_clean_data`: Do the training you need to reorganize the table and remove invalid values.        
 `mi_get_padlen`: Get max length of ID data.        
-`mi_split_col`: Cut the string of ID column character by character and divide it into multiple columns.           
-`mi_to_numer`: Convert data to numeric, and for the ID column convert with fixed levels.
+`mi_split_col`: Split the string of the ID column word by word into multiple columns.          
+`mi_to_numer`: Convert the splitted ID to a factor in a fixed mapping and then to a numeric type.
 
 ```R
 data <- tibble::tibble(
@@ -121,7 +122,7 @@ data_blcd = mi_balance_data(data_fct,ratio = 0.3,parallel = F)
 
 ### Models Training
 
-Due to the large size of the dataset, the model training time is too long, so only a certain number of samples are taken for training.      
+Train the models using the divided training set.     
 `mi_run_bmr`: Compare classification models with small samples. 
 
 ```R
@@ -130,13 +131,13 @@ benchmark <- result[1]
 score <- result[2] %>% as.data.table() %T>% print()
 ```
 
-The results were used to determine the choice of models for decision tree, random forest, and Xgboost.    
-`mi_tune_rp`: Tune the decision tree model by hyperband.     
-`mi_train_rp`: Decision tree model training.     
-`mi_tune_rg`: Tune the random forest model by hyperband.        
-`mi_train_rg`: Random forest model Training.        
-`mi_tune_xgb`: Tune the Xgboost model by hyperband.      
-`mi_train_xgb`: Xgboost model training.
+The results were used to determine the choice of models for Decision Tree (DT), Random Forest (RF), and eXtreme Gradient Boosting (XGBoost).    
+`mi_tune_rp`: Tune the DT model by hyperband.     
+`mi_train_rp`: Train the DT model.     
+`mi_tune_rg`: Tune the RF model by hyperband.        
+`mi_train_rg`: Train the RF model.        
+`mi_tune_xgb`: Tune the XGBoost model by hyperband.      
+`mi_train_xgb`: Train the XGBoost model.
 
 ```R
 train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~tidyr::replace_na(.x,0))) %>% dplyr::slice(sample(nrow(data_blcd[[1]]), 2000), preserve = TRUE) 
@@ -152,7 +153,7 @@ inst_xgb <- mi_tune_xgb(train, test)
 result_xgb <- mi_train_xgb(train, test, measure = msr("classif.acc"), instance = inst_xgb[[1]])
 ```
 
-In addition to several classical machine learning algorithms, a BP neural network is used for classification.
+In addition to several classical machine learning algorithms, a Back Propagation Neural Network (BPNN) is used for classification.
 
 This is achieved by calling `tensorflow` via the `keras` package, so `tensorflow` needs to be installed first. 
 
@@ -166,7 +167,7 @@ library(reticulate)
 path_to_python <- use_python(python = "/path/to/python.exe")
 ```
 
-`mi_train_BP`: Train a three layers neural network model.
+`mi_train_BP`: Train the BPNN model with a three-layers neural network.
 
 ```R
 result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
@@ -175,9 +176,9 @@ result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs
 ### Models Explaining
 
 The heatmap of the model and confusion matrix is returned after training.        
-`mi_get_confusion`: Convert the results of model training into an obfuscation matrix.          
+`mi_get_confusion`: Plot confusion matrix with the results obtained from trained model.          
 `mi_plot_heatmap`: Plot the heatmap for the confusion matrix.        
-`mi_unify_mod`: Predict with four models and unify results by the sub-model's specificity score to the four possible classes.
+`mi_unify_mod`: Predict with four models and unify results by the submodels' specificity score.
 
 ```R
 matri_rp <- mi_get_confusion(result_rp)
