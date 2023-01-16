@@ -1,0 +1,115 @@
+---
+title: "MantaID tutorial"
+author: "Molaison"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+	This tutorial introduces MantaID, a machine-learning-based tool to automate the identification of biological database IDs. IDs are required for simple access to biological data and for facilitating cross-referencing between databases. However, due to the lack of universal agreement on the composition of a database ID, resulting in the situation that the same biological entity may have various IDs. Current ID conversion tools all require previous knowledge of the database to which they belong and are incapable of identifying the IDs in the absence of database names. MantaID bridges this gap enabling the identification of IDs, facilitating the text-mining in scientific documents and ID conversion.
+
+## How to use MantaID?
+
+	The computational framework and all the approaches of MantaID are implemented as a software package that handles all the different steps of the model development process and makes it easy to create user-defined ID recognition models by adjusting a few parameters.
+
+### Preparation and session set up
+
+	This tutorial is based on R.If you have not installed R, you will find an introduction to run it in your computer [here](https://rstudio-education.github.io/hopr/starting.html). Before turning to the workflow, please install all the packages by running the code below.
+	
+```{R message=FALSE, warning=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager",repos = "http://cran.us.r-project.org")
+if (!requireNamespace("remotes", quietly = TRUE))
+    install.packages("remotes",repos = "http://cran.us.r-project.org")
+library(remotes)
+library(BiocManager)
+if (!requireNamespace("biomaRt", quietly = TRUE))
+	BiocManager::install("biomaRt", version = "3.16")
+install_bitbucket("Molaison/MantaID")
+```
+
+Next, we load the `MantaID` package.
+
+```{R message=FALSE, warning=FALSE}
+library(MantaID)
+```
+
+
+### Data preparation
+
+	This section illustrates how to procure data for training with `biomaRt` package. To give `MantaID` a test drive, we use human genome-related datasets to train a `MantaID` model. Users can specify another datasets or use customized IDs data.
+	First, use `mi_get_ID_attr` function to get the attributes of the dataset associated with the ID. Then, with the attributes screened out, retrieve the corresponding data as a data frame with two columns, `ID` and `class`.
+```{R}
+attributes = mi_get_ID_attr(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia") %>% slice(1:10)
+data_ID = mi_get_ID(attributes,biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
+data_ID
+```
+	Sometimes the data obtained from other sources is an ID mapping table, with each row corresponding to an ID entity, and each column corresponds to a different database. So, do the training you need to reorganize the table and remove invalid values using the 'mi_clean_data' function. For example:
+	
+```{R}
+data <- tibble::tibble(
+	"ensembl_gene_id" = c("ENSG00000001626","ENSG00000002549","ENSG00000002586","ENSG00000002745"),
+	'ensembl_exon_id' = c("ENSE00002398851","ENSE00002398851","ENSE00002398851","ENSE00002398851"),
+	'refseq_peptide' = c("NP_001303256","-","NP_001382772","NP_001340728")
+)
+data_ID_clean = mi_clean_data(data,placeholder="-")
+data_ID_clean
+```
+	Further processing of IDs is needed for training. The first step is to split the IDs into multiple columns character by character. The IDs is filled with "*" up to the maximum length of IDs to guarantee consistent data dimension. Users can also specifies the `pad_len` parameter to control the number of features used in the following training.
+	
+```{R}
+pad_len = mi_get_padlen(data_ID)
+data_splt = mi_split_col(data_ID,cores = NULL,pad_len = pad_len)
+str(data_splt)
+```
+	The IDs has been split into several column with single characters, which is not available for training. The `mi_to_numer` function specifies the levels of each feature column prefixed with "pos" and convert them into `factor` type. To learn more about R `factor`, please refer to [here](https://r4ds.had.co.nz/factors.html). For the concern of compatibility, the feature columns are then converted into `integer` type which can directly be used for training.
+
+```{R}
+data_fct = mi_to_numer(data_splt,levels = c("*", 0:9, letters, LETTERS, "_", ".", "-", " ", "/", "\\", ":"))
+```
+
+Features are then all converted numeric type while the target column `class` remains `factor` type.
+
+### Data Balancing
+
+	To prevent the trained model from losing its ability to distinguish between databases with small numbers of IDs, it is necessary to balance the data. On the one hand, the smote method is used to oversample databases with small numbers of IDs to increase the data density, and on the other hand, databases with large numbers of IDs are undersampled through random sampling to reduce the number.
+
+	The performing of data balancing in the function `mi_balance_data` is based on `scutr` package, allowing parallel only for Mac computers. The data set produced by balancing cannot be used as the test set any longer, so the ratio proportion of the original data set is divided as the test set, and this portion of the data is removed from the balanced data set, while the remaining portion is used as the training set. 
+
+```{R}
+data_blcd = mi_balance_data(data_fct,ratio = 0.3,parallel = F)
+train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~tidyr::replace_na(.x,0)))
+test = data_blcd[[2]]
+print(train %>% group_by(class) %>% summarize(n = n()))
+print(data_fct %>% group_by(class) %>% summarize(n = n()))
+```
+
+After data balancing, the number of majority and minority classes are generally balanced.
+
+### Models Tuning
+
+	MantaID contains four machine-learning sub-models: Classification and Regression Tree (CART), Random Forest (RF), eXtreme Gradient Boost (XGBoost), and Back Propagation Neural Network (BPNN). 
+	For the first three models, we achieve `hyperband` tuning to find the best parameter configurations based on `mlr3hyperband` package. For further understanding of `hyperband` algorithm, please visit [here](https://arxiv.org/abs/1603.06560).
+	In the `mi_tune_*` function, except for the performing of `hyperband` tuning, the stage plots are also drawn to manifest the "competition" between different parameter configurations.
+	
+```{R}
+#Decision Tree
+inst_rp <- mi_tune_rp(train, test)
+#Random Forest
+inst_rg <- mi_tune_rg(train, test)
+#Xgboost
+inst_xgb <- mi_tune_xgb(train, test)
+
+inst_rp[[2]]
+inst_rg[[2]]
+inst_xgb[[2]]
+```
+
+### Models Training
+
+	After tuning, the optimal parameter configuration calculated

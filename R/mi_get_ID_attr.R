@@ -17,6 +17,6 @@ mi_get_ID_attr <- function(biomart = "genes", dataset = "hsapiens_gene_ensembl",
   #从description列中筛选包含ID或name但不包含end，start，description，probe，version，content，Aberrant,Source,Strain,Chromosome,BioGrid,evidence且字符长度小于18的attributes
   attributes <- listAttributes(ensemb_hm_dset) %>%
     filter(grepl(.[["description"]], pattern = "([iI][dD])|(name)", ignore.case = TRUE)) %>%
-    filter(!grepl(.[["description"]], pattern = "(end)|(start)|(description)|(probe)|(version)|(content)|(Aberrant)|(Source)|(Strain)|(Chromosome)|(BioGRID)|(evidence)|", ignore.case = TRUE)) %>%
-    filter(str_length(.[["name"]]) < 18)
+    filter(!grepl(.[["description"]], pattern = "(end)|(start)|(description)|(probe)|(version)|(content)|(Aberrant)|(Source)|(Strain)|(Chromosome)|(BioGRID)|(evidence)", ignore.case = TRUE)) %>%
+    filter(!grepl(.[["name"]], pattern = "(homolog)|(paralog)", ignore.case = TRUE))
 }
