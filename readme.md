@@ -31,6 +31,7 @@ BiocManager::install("biomaRt", version = "3.16",force = TRUE)
 ```R
 if (!requireNamespace("devtools", quietly = TRUE))
     install.packages("devtools")
+library(devtools)
 install_bitbucket("Molaison/MantaID")
 ```
 
