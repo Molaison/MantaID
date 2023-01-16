@@ -23,7 +23,7 @@ mi_tune_rg <- function(data, resampling = rsmp("cv", folds = 5), measure = msr("
   learner <- lrn("classif.ranger", importance = "impurity", save.memory = F, oob.error = F, num.threads = 12)
   task <- data %>%
     as.data.table() %>%
-    as_task_classif(target = "class", feature = -c("class"))
+    as_task_classif(target = "class", feature = -c("class"),id = "tune")
   instance <- tune(
     method = tnr("hyperband", eta = 3),
     task = task,

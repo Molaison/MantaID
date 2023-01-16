@@ -27,7 +27,7 @@ mi_tune_xgb <- function(data, resampling = rsmp("cv", folds = 5), measure = msr(
   learner <- lrn("classif.xgboost", nthread = 12)
   task <- data %>%
     as.data.table() %>%
-    as_task_classif(target = "class", feature = -c("class"))
+    as_task_classif(target = "class", feature = -c("class"),id = "tune")
   instance <- tune(
     method = tnr("hyperband", eta = 3),
     task = task,

@@ -39,19 +39,31 @@ Next, we load the `MantaID` package.
 library(MantaID)
 ```
 
+Because deep-learning is achieved in MantaID by calling `tensorflow` via the `keras` package, so `python` and `tensorflow` needs to be installed first. 
+
+1. To install python and tensorflow dependencies, please follow the instructions provided by Tensorflow via [TensorFlow installation](https://www.tensorflow.org/install/pip?hl=zh-cn#system-install)
+
+2. Use tensorflow in R. Please replace "/path/to/python.exe" with your python path.
+
+```{R}
+install.packages("reticulate")
+library(reticulate)
+library(tensorflow)
+path_to_python <- use_python(python = "/path/to/python.exe")
+```
 
 ### Data preparation
 
 	This section illustrates how to procure data for training with `biomaRt` package. To give `MantaID` a test drive, we use human genome-related datasets to train a `MantaID` model. Users can specify another datasets or use customized IDs data.
 	First, use `mi_get_ID_attr` function to get the attributes of the dataset associated with the ID. Then, with the attributes screened out, retrieve the corresponding data as a data frame with two columns, `ID` and `class`.
-```{R}
+```{R,cache=TRUE}
 attributes = mi_get_ID_attr(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia") %>% slice(1:10)
 data_ID = mi_get_ID(attributes,biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
 data_ID
 ```
 	Sometimes the data obtained from other sources is an ID mapping table, with each row corresponding to an ID entity, and each column corresponds to a different database. So, do the training you need to reorganize the table and remove invalid values using the 'mi_clean_data' function. For example:
 	
-```{R}
+```{R,cache=TRUE}
 data <- tibble::tibble(
 	"ensembl_gene_id" = c("ENSG00000001626","ENSG00000002549","ENSG00000002586","ENSG00000002745"),
 	'ensembl_exon_id' = c("ENSE00002398851","ENSE00002398851","ENSE00002398851","ENSE00002398851"),
@@ -62,14 +74,14 @@ data_ID_clean
 ```
 	Further processing of IDs is needed for training. The first step is to split the IDs into multiple columns character by character. The IDs is filled with "*" up to the maximum length of IDs to guarantee consistent data dimension. Users can also specifies the `pad_len` parameter to control the number of features used in the following training.
 	
-```{R}
+```{R,cache=TRUE}
 pad_len = mi_get_padlen(data_ID)
 data_splt = mi_split_col(data_ID,cores = NULL,pad_len = pad_len)
 str(data_splt)
 ```
 	The IDs has been split into several column with single characters, which is not available for training. The `mi_to_numer` function specifies the levels of each feature column prefixed with "pos" and convert them into `factor` type. To learn more about R `factor`, please refer to [here](https://r4ds.had.co.nz/factors.html). For the concern of compatibility, the feature columns are then converted into `integer` type which can directly be used for training.
 
-```{R}
+```{R,cache=TRUE}
 data_fct = mi_to_numer(data_splt,levels = c("*", 0:9, letters, LETTERS, "_", ".", "-", " ", "/", "\\", ":"))
 ```
 
@@ -81,9 +93,9 @@ Features are then all converted numeric type while the target column `class` rem
 
 	The performing of data balancing in the function `mi_balance_data` is based on `scutr` package, allowing parallel only for Mac computers. The data set produced by balancing cannot be used as the test set any longer, so the ratio proportion of the original data set is divided as the test set, and this portion of the data is removed from the balanced data set, while the remaining portion is used as the training set. 
 
-```{R}
+```{R,cache=TRUE}
 data_blcd = mi_balance_data(data_fct,ratio = 0.3,parallel = F)
-train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~tidyr::replace_na(.x,0)))
+train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~tidyr::replace_na(.x,0)))%>% dplyr::slice(sample(nrow(data_blcd[[1]]), 10000), preserve = TRUE) 
 test = data_blcd[[2]]
 print(train %>% group_by(class) %>% summarize(n = n()))
 print(data_fct %>% group_by(class) %>% summarize(n = n()))
@@ -94,16 +106,16 @@ After data balancing, the number of majority and minority classes are generally 
 ### Models Tuning
 
 	MantaID contains four machine-learning sub-models: Classification and Regression Tree (CART), Random Forest (RF), eXtreme Gradient Boost (XGBoost), and Back Propagation Neural Network (BPNN). 
-	For the first three models, we achieve `hyperband` tuning to find the best parameter configurations based on `mlr3hyperband` package. For further understanding of `hyperband` algorithm, please visit [here](https://arxiv.org/abs/1603.06560).
+	For the first three models, we achieve `hyperband` tuning to find the best parameter configurations based on `mlr3hyperband` package. For further understanding of `hyperband` algorithm, please visit [here](https://arxiv.org/abs/1603.06560). In each iteration, a complete run of sequential halving is executed. In it, after evaluating each configuration on the same subset size, only a fraction of `1/eta` of them ‘advances’ to the next round. The paramter `eta` is default set to 3.
 	In the `mi_tune_*` function, except for the performing of `hyperband` tuning, the stage plots are also drawn to manifest the "competition" between different parameter configurations.
 	
-```{R}
+```{R,cache=TRUE}
 #Decision Tree
-inst_rp <- mi_tune_rp(train, test)
+inst_rp <- mi_tune_rp(train, eta = 3, resampling = rsmp("bootstrap", ratio = 0.8, repeats = 3))
 #Random Forest
-inst_rg <- mi_tune_rg(train, test)
+inst_rg <- mi_tune_rg(train, eta = 3, resampling = rsmp("bootstrap", ratio = 0.8, repeats = 3))
 #Xgboost
-inst_xgb <- mi_tune_xgb(train, test)
+inst_xgb <- mi_tune_xgb(train, eta = 3, resampling = rsmp("bootstrap", ratio = 0.8, repeats = 3))
 
 inst_rp[[2]]
 inst_rg[[2]]
@@ -112,4 +124,55 @@ inst_xgb[[2]]
 
 ### Models Training
 
-	After tuning, the optimal parameter configuration calculated
+	After tuning, the optimal parameter configuration calculated can be used for the following training by passing the tuner instances to the `mi_train_*` function.
+	
+```{R warning=FALSE, R,cache=TRUE}
+#Decision Tree
+result_rp <- mi_train_rp(train, test, measure = msr("classif.acc"), instance = inst_rp[[1]])
+#Random Forest
+result_rg <- mi_train_rg(train, test, measure = msr("classif.acc"), instance = inst_rg[[1]])
+#Xgboost
+result_xgb <- mi_train_xgb(train, test, measure = msr("classif.acc"), instance = inst_xgb[[1]])
+
+#BPNN
+result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
+```
+
+### Models Explaining
+	To evaluate the performance of models, the confusion matrices of test set are calculated and visualized with heatmap. Each row of the matrix represents the instances in an actual class while each column represents the instances in a predicted class, or vice versa. 
+	
+```{R,cache=TRUE fig.height=20, fig.width=22, R,cache=TRUE}
+matri_rp <- mi_get_confusion(result_rp)
+matri_rg <- mi_get_confusion(result_rg)
+matri_xgb <- mi_get_confusion(result_xgb)
+matri_BP <- mi_get_confusion(result_BP,ifnet = T)
+
+mi_plot_heatmap(matri_rp, name="rp",filepath = "Graph/")
+mi_plot_heatmap(matri_rg, name="rg",filepath = "Graph/")
+mi_plot_heatmap(matri_xgb, name="xgb",filepath = "Graph/")
+mi_plot_heatmap(matri_BP, name="BP",filepath = "Graph/")
+```
+
+	In the heatmaps, the value in the squares depicts the number of samples whose actual classes are `Reference`, while predicted as `Prediction`. For clarity, zero values are omitted. 
+	MantaID implements submodel unification based on a new method. For cases with a majority class in prediction results, MantaID adopts the voting method directly, while for cases with scattered opinions, MantaID calculates the score of results of each model to find the optimal result. 
+
+```{R,cache=TRUE}
+data("mi_data_rawID")
+data = mi_data_rawID
+final_result = mi_unify_mod(data, "ID",result_rg,result_rp,result_xgb,result_BP,c_value = 0.75, pad_len = pad_len)
+final_result
+```
+	The `integrated` column is the final result MantaID determined. 
+	To prove the effectiveness of unification method, we can compare the balance accuracy by classes of test set. The integrated model inherits the individual models' strengths well, scoring high in almost all classes when compared to the sub-models. 
+```{R,cache=TRUE}
+balance_accuracy = map_dfc(as.list(final_result),function(x){
+	confusion = confusionMatrix(data = x,reference = data$class)$byClass %>% as.data.frame()
+	return(confusion%>% select(`Balanced Accuracy`))
+}) %>% set_names(names(final_result))
+balance_accuracy
+```	
+### Session information
+
+```{R}
+sessionInfo()
+```

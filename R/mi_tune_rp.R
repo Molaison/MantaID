@@ -23,7 +23,7 @@ mi_tune_rp <- function(data, resampling = rsmp("bootstrap", ratio = 0.8, repeats
   learner <- lrn("classif.rpart", keep_model = F)
   task <- data %>%
     as.data.table() %>%
-    as_task_classif(target = "class", feature = -c("class"))
+    as_task_classif(target = "class", feature = -c("class"),id = "tune")
   instance <- tune(
     method = tnr("hyperband", eta = 3),
     task = task,

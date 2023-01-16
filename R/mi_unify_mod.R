@@ -36,8 +36,8 @@ mi_unify_mod <- function(data, col_id, result_rg, result_rp, result_xgb, result_
       # #将预测结果放到第一列
       select(response, everything())
   }
-  major <- function(Deeplearn, DecisionTree, RandomForest, Xgboost) {
-    vec <- c(Deeplearn, DecisionTree, RandomForest, Xgboost)
+  major <- function(BPNN, DT, RF, XGB) {
+    vec <- c(BPNN, DT, RF, XGB)
     tab <- vec %>%
       table() %>%
       reshape2::melt()
@@ -123,6 +123,7 @@ mi_unify_mod <- function(data, col_id, result_rg, result_rp, result_xgb, result_
     set_names(c("BPNN", "DT", "RF", "XGB"))
   major_result <- pmap(predict_all, major) %>%
     unlist() %>%
+    factor(levels = level_) %>%
     bind_cols(predict_all) %>%
     set_names(c("Integrated", "BPNN", "DT", "RF", "XGB"))
 
