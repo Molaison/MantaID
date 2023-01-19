@@ -1,3 +1,5 @@
+# MantaID  <img src="reference/figures/logo.svg" align="right" width="18%" height="18%" />
+
 ## Introduction
 
 This tutorial introduces MantaID, a machine-learning-based tool to automate the identification of biological database IDs. IDs are required for simple access to biological data and for facilitating cross-referencing between databases. However, due to the lack of universal agreement on the composition of a database ID, resulting in the situation that the same biological entity may have various IDs. Current ID conversion tools all require previous knowledge of the database to which they belong and are incapable of identifying the IDs in the absence of database names. MantaID bridges this gap enabling the identification of IDs, facilitating the text-mining in scientific documents and ID conversion. Additionally, a shiny application is offered, accessible via [MantaID (shinyapps.io)](https://molaison.shinyapps.io/MantaID/) and API via [MantaIDapi](http://164.92.98.237/MantaIDapi/__docs__/).
