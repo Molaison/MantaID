@@ -14,3 +14,4 @@ Suggests:
 Depends: 
     R (>= 4.2.0),biomaRt,xgboost,caret, data.table, dplyr, ggplot2, keras,magrittr,mlr3tuning,mlr3,mlr3learners,purrr,reshape2,scutr, stringr, tibble, tidyr,tidyselect,paradox,RColorBrewer,ggcorrplot,ranger,rpart,mlr3hyperband
 LazyData: true
+URL: https://molaison.github.io/MantaID/

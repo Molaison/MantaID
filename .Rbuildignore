@@ -12,3 +12,4 @@ MantaID_tutorial.Rmd
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^\.github$
