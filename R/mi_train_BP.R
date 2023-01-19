@@ -16,7 +16,7 @@
 #' @importFrom stringr str_c
 #' @return A `list` object containing the prediction confusion matrix, the `model` object, and the mapping of predicted numbers to classes.
 #' @export
-mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3) {
+mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3,verbose = 0) {
   train <- train %>%
     rename("class" = cls)
   test <- test %>%
@@ -58,7 +58,7 @@ mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size
   history <- model %>% fit(
     x = train_set, y = train_target,
     epochs = epochs, batch_size = batch_size,
-    validation_split = 0.3, verbose = 2
+    validation_split = 0.3,verbose = 0
   )
   if (!is.null(path2save)) {
     save_model_tf(model, str_c(path2save, "/result_net"))

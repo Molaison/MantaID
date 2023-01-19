@@ -1,14 +1,12 @@
-#' Title
+#' Performing feature selection in a automatic way based on correlation and feature importance.
 #'
-#' @param data
-#' @param cor_thresh
-#' @param imp_thresh
-#' @param union
+#' @param data The data frame returned by `mi_to_numer()`.
+#' @param cor_thresh The threshold set for Pearson correlation. If correlation value is over this threshold, the two features will be viewed as redundant and one of them will be removed.
+#' @param imp_thresh The threshold set for feature importance. The last several features with the lowest importance will be removed if remained importance lower than `imp_thresh`.
+#' @param union The method for combining the decisions of correlation method and importance method. If `TRUE`, any of the features calculated by the two methods will be returned. Otherwise, only features in the results of both methods will be returned.
 #'
-#' @return
+#' @return The names of the features that should be removed.
 #' @export
-#'
-#' @examples
 mi_filter_feat <- function(data,cor_thresh = 0.7,imp_thresh = 0.99,union = FALSE){
 	cor_mt <- data %>%
 		select(-class) %>%
