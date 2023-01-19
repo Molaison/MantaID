@@ -1,3 +1,4 @@
 url: https://molaison.github.io/MantaID/
 template:
   bootstrap: 5
+on: push
