@@ -145,14 +145,21 @@ result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs
 `mi_get_confusion`, converts the results of model training into an obfuscation matrix; the results of the model training function are used directly as input; `ifnet`, a logical value, TRUE for a neural network model; `mi_plot_heatmap`, plots the heatmap for the confusion matrix; `name`, the model name, the suffix when the file is stored; `filepath`, the path when the model is stored.
 
 ```{R,cache=TRUE}
+#得到关于决策树的混淆矩阵
 matri_rp <- mi_get_confusion(result_rp)
+#得到关于随机森林的混淆矩阵
 matri_rg <- mi_get_confusion(result_rg)
+#得到关于xgboost的混淆矩阵
 matri_xgb <- mi_get_confusion(result_xgb)
+#得到关于神经网络的混淆矩阵
 matri_BP <- mi_get_confusion(result_BP,ifnet = T)
-
+#绘制关于决策树的混淆矩阵热图
 mi_plot_heatmap(matri_rp, name="rp",filepath = "Graph/")
+#绘制关于随机森林的混淆矩阵热图
 mi_plot_heatmap(matri_rg, name="rg",filepath = "Graph/")
+#绘制关于xgboost的混淆矩阵热图
 mi_plot_heatmap(matri_xgb, name="xgb",filepath = "Graph/")
+#绘制关于神经网络的混淆矩阵热图
 mi_plot_heatmap(matri_BP, name="BP",filepath = "Graph/")
 ```
 

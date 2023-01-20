@@ -8,32 +8,34 @@
 #' @return A dataframe.
 #' @export
 mi_unify_mod <- function(data, col_id, result_rg, result_rp, result_xgb, result_BP, c_value = 0.75, pad_len = 30) {
+  #Select the col_id column from the data and rename it to ID, then convert the ID class to a character type.
   data <- data %>%
     select(col_id, everything()) %>%
     rename("ID" = col_id) %>%
     mutate(across(.cols = "ID", .fns = as.character))
   string_split <- function(str, pad_len) {
+    #Cut a single ID character and convert it to a vector.
     str %>%
       as.character() %>%
       strsplit(split = "") %>%
       unlist() %>%
+      #Determine the length of ID characters, select the maximum character length, and use "*" to fill in the missing positions of all ID characters.
       c(., rep("*", ifelse((pad_len - length(.)) > 0, pad_len - length(.), 0))) %>%
       .[1:pad_len] %>%
       set_names(str_c("pos", 1:pad_len))
   }
+  #Converting data to numeric types.
   prd_new <- function(data, learner) {
     data %>%
       mutate(across(.col = everything(), .fns = as.numeric))
-    # 将数据类型转为数值型
-
+    #Call the learner to make predictions and convert the results into tables.
     learner$predict_newdata(data) %>%
-      # 调用学习器进行预测
       as.data.table() %>%
-      # 将预测结果与数据组合
+      #将预测结果与数据组合
       bind_cols(data, .) %>%
-      # #预测新数据，真实值未知
+      #预测新数据，真实值未知
       select(-truth, -row_ids) %>%
-      # #将预测结果放到第一列
+      #将预测结果放到第一列
       select(response, everything())
   }
   major <- function(Deeplearn, DecisionTree, RandomForest, Xgboost) {

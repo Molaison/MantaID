@@ -13,11 +13,11 @@
 #' @return A `tibble` dataframe.
 #' @export
 mi_get_ID <- function(attributes, biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia") {
-  #连接到选定的BioMart数据库和由Ensemble托管的数据集
+  #Connect to selected BioMart databases and datasets hosted by Ensemble.
   Ensembl <- useEnsembl(biomart = biomart, dataset = dataset, mirror = mirror, verbose = TRUE)
-  #将attributes转换成列表
+  #Convert attributes to a list.
   out <- vector("list", length = nrow(attributes))
-  #根据attributes的name检索ID，如果在检索过程中出现错误，则睡眠0.5秒
+  #Retrieve ID according to the name of attributes and sleep for 0.5 seconds if an error occurs during the retrieval process.
   for (i in 1:nrow(attributes)) {
     try_result <- try({
       out[[i]] <- getBM(attributes = unique(attributes[["name"]])[i], mart = Ensembl)
@@ -28,20 +28,20 @@ mi_get_ID <- function(attributes, biomart = "genes", dataset = "hsapiens_gene_en
     }
     Sys.sleep(0.5)
   }
-  #将tibble的第一列命名为ID，并将里面的元素转换成字符,第二列命名为class
+  #The first column of tibble is named ID and the elements inside are converted to characters, the second column is named class.
   to_2col <- function(df) {
     df <- df %>%
       as_tibble() %>%
       mutate(class = colnames(.)[1]) %>%
       rename(ID = 1) %>%
       mutate(across(.cols = 1, .fns = as.character))
-    #如果存在匹配不到ID字符的情况，则tibble对应位置的ID为NA，class为NA
+    #If there is no match for the ID character, the ID of the corresponding position of tibble is converted to NA and class is converted to NA.
     if(any(str_detect(pull(df,ID)," "))){
         return(tibble(ID=NA,class=NA))
     }else{
       return(df)
     }
   }
-  #批量读取数据文件并合并（列名相同），去除ID和class都缺失的行
+  #Batch read data file and merge (same column name), remove rows with missing ID and class.
   map_dfr(out, .f = to_2col) %>% drop_na()
 }
