@@ -1,62 +1,69 @@
 ---
-
-title: 'MantaID':A machine-learning-based tool to automate the identification of biological database IDs.
-author: Zeng Zhengpeng
-date: 2022/5/1
-output: rmdformats::material
-editor_options: 
-  markdown: 
-    wrap: 72
-    
+title: "MantaID tutorial"
+author: "Molaison"
+date: "`r Sys.Date()`"
+output: html_document
 ---
 
-## Import
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval = FALSE, include = FALSE)
+```
 
-biomaRt, ggplot2, caret, data.table, dplyr, keras, magrittr, mlr3, purrr, reshape2, scutr, stringr, tibble, tidyr, tidyselect, paradox.
+## Introduction
 
-```{R}
-#Note: Run the following code for installing biomaRt, mlr3, mlr3tuning packages of specific version.
+This tutorial introduces MantaID, a machine-learning-based tool to automate the identification of biological database IDs. IDs are required for simple access to biological data and for facilitating cross-referencing between databases. However, due to the lack of universal agreement on the composition of a database ID, resulting in the situation that the same biological entity may have various IDs. Current ID conversion tools all require previous knowledge of the database to which they belong and are incapable of identifying the IDs in the absence of database names. MantaID bridges this gap enabling the identification of IDs, facilitating the text-mining in scientific documents and ID conversion.
+
+## How to use MantaID?
+
+The computational framework and all the approaches of MantaID are implemented as a software package that handles all the different steps of the model development process and makes it easy to create user-defined ID recognition models by adjusting a few parameters.
+
+### Preparation and session set up
+
+This tutorial is based on R. If you have not installed R, you will find an introduction to run it in your computer [here](https://rstudio-education.github.io/hopr/starting.html). Before turning to the workflow, please install all the packages by running the code below.
+	
+```{R message=FALSE, warning=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager",repos = "http://cran.us.r-project.org")
 if (!requireNamespace("remotes", quietly = TRUE))
     install.packages("remotes",repos = "http://cran.us.r-project.org")
 library(remotes)
-install_version("mlr3learners","0.5.1",force = T,upgrade ="never")
-install_version("mlr3tuning","0.13.1",force = T,upgrade ="never")
-install_version("mlr3","0.13.4",force = T,upgrade ="never")
 library(BiocManager)
-BiocManager::install("biomaRt", version = "3.16")
-```
-
-## Installation
-
-```{R}
-if (!requireNamespace("devtools", quietly = TRUE))
-    install.packages("devtools")
+if (!requireNamespace("biomaRt", quietly = TRUE))
+	BiocManager::install("biomaRt", version = "3.16")
 install_bitbucket("Molaison/MantaID")
 ```
 
-## Data Retrieving
+Next, we load the `MantaID` package.
 
-biomaRt provides an interface to R and the BioMart software suite databases (e.g. Ensembl, Uniprot, HapMap), allowing direct access to information in the databases via R.
+```{R message=FALSE, warning=FALSE}
+library(MantaID)
+```
 
-Set the BioMart dataset to be connected to via biomaRt. Here we choose to use the human genome dataset, Mirror choose asia mirror (depending on the region).
+Because deep-learning is achieved in MantaID by calling `tensorflow` via the `keras` package, so `python` and `tensorflow` need to be installed first. 
 
-First, use 'mi_get_ID_attr' function to get the attributes of the dataset associated with the ID. Then utilize 'flt_attri' function further by looking at the dataset to select the dataset of interest. Finally, the incoming attributes are automatically retrieved by the 'mi_get_ID' function, which then compiles the findings into a large table.
+1. To install python and tensorflow dependencies, please follow the instructions provided by Tensorflow via [TensorFlow installation](https://www.tensorflow.org/install/pip?hl=zh-cn#system-install).
 
+2. Use tensorflow in R. Please replace "/path/to/python.exe" with your python path.
+
+```{R include=FALSE}
+install.packages("reticulate")
+library(reticulate)
+# path_to_python <- use_python(python = "/path/to/python.exe")
+```
+
+### Data preparation
+
+This section illustrates how to procure data for training with `biomaRt` package. To give `MantaID` a test drive, we use human genome-related datasets to train a `MantaID` model. Users can specify another dataset or use customized IDs data.
+First, use `mi_get_ID_attr` function to get the attributes of the dataset associated with the ID. Then, with the attributes screened out, retrieve the corresponding data as a data frame with two columns, `ID` and `class`.
 ```{R,cache=TRUE}
 ensembl <- useEnsembl(biomart = "ensembl")
 listDatasets(mart = ensembl)
 attributes = mi_get_ID_attr(biomart = "genes", dataset = "mmusculus_gene_ensembl", mirror = "asia")
-flt_attri = attributes %>% dplyr::slice(1,3)
 data_ID = mi_get_ID(flt_attri,biomart = "genes", dataset = "mmusculus_gene_ensembl", mirror = NULL)
-data_ID %>% group_by(class) %>% summarise(counts=n())
+data_ID
 ```
-
-## Data Processing
-
-Sometimes the data obtained is an ID mapping table, with each row corresponding to an ID entity, and each column corresponds to a different database. So, do the training you need to reorganize the table and remove invalid values. Use the 'mi_clean_data' function to do this. For example:
-
+Sometimes the data obtained from other sources is an ID mapping table, with each row corresponding to an ID entity, and each column corresponds to a different database. So, do the training you need to reorganize the table and remove invalid values using the `mi_clean_data` function. For example:
+	
 ```{R,cache=TRUE}
 data <- tibble::tibble(
 	"ensembl_gene_id" = c("ENSG00000001626","ENSG00000002549","ENSG00000002586","ENSG00000002745"),
@@ -64,87 +71,78 @@ data <- tibble::tibble(
 	'refseq_peptide' = c("NP_001303256","-","NP_001382772","NP_001340728")
 )
 data_ID_clean = mi_clean_data(data,placeholder="-")
+data_ID_clean
 ```
-
-The features of ID, in contrast to other data, are the placements of the constituent characters. Since it is impossible to train on only one column of "ID," it is split into a single character vector to extract the features, and the vector is filled with "\*" up to the maximum ID to guarantee consistent data dimension.
-
+Further processing of IDs is needed for training. The first step is to split the IDs into multiple columns character by character. The IDs is filled with "*" up to the maximum length of IDs to guarantee consistent data dimension. Users can also specify the `pad_len` parameter to control the number of features used in the following training.
+	
 ```{R,cache=TRUE}
 pad_len = mi_get_padlen(data_ID)
 data_splt = mi_split_col(data_ID,cores = NULL,pad_len = pad_len)
 str(data_splt)
 ```
-
-It is necessary to convert the existing feature columns to factor types because they are currently strings and cannot be used for training. Because of characters appear in different feature columns in a different order, the levels parameter must be set in order to standardize the factor levels. This can then be used directly as a numeric type, but for compatibility reasons it will also be converted into a numeric type.
+The IDs has been split into several columns with single characters, which is not available for training. The `mi_to_numer` function specifies the levels of each feature column prefixed with "pos" and converts them into `factor` type. To learn more about R `factor`, please refer to [here](https://r4ds.had.co.nz/factors.html). For the concern of compatibility, the feature columns are then converted into `integer` type which can directly be used for training.
 
 ```{R,cache=TRUE}
 data_fct = mi_to_numer(data_splt,levels = c("*", 0:9, letters, LETTERS, "_", ".", "-", " ", "/", "\\", ":"))
 ```
 
-## Data Balancing
+Features are then all converted to numeric type while the target column `class` remains `factor` type.
 
-To prevent the trained model from losing its ability to distinguish between databases with small numbers of IDs, it is necessary to balance the data. On the one hand, the smote method is used to oversample databases with small numbers of IDs to increase the data density, and on the other hand, databases with large numbers of IDs are undersampled through random sampling to reduce the number.
+### Data Balancing
 
-The data set produced by balancing cannot be used as the test set any longer, so the ratio proportion of the original data set is divided as the test set, and this portion of the data is removed from the balanced data set, while the remaining portion is used as the training set. It should be noted, however, that the parallel parameter is only supported by Mac.
+To prevent the trained model from losing its ability to distinguish between databases with small numbers of IDs, it is necessary to balance the data. On the one hand, the smote method is used to oversample databases with small numbers of IDs to increase the data density, and on the other hand, databases with large numbers of IDs are undersampled through random sampling to reduce the number of IDs.
+
+The performing of data balancing in the function `mi_balance_data` is based on `scutr` package, allowing parallel only for Mac computers. The data set produced by balancing cannot be used as the test set, so the `ratio` proportion of the original data set is divided as the test set, and this portion of the data is removed from the balanced data set, while the remaining portion is used as the training set. 
 
 ```{R,cache=TRUE}
 data_blcd = mi_balance_data(data_fct,ratio = 0.3,parallel = F)
-```
-
-## Models Training
-
-Due to the large size of the dataset, the model training time is too long, so only a certain number of samples are taken for training; where the training set and the dataset are divided by calling the partition function, which exists as an index of the original data; three models are used for benchmark training, namely decision tree, random forest and plain Bayes, and resampling is performed using the five-fold crossover method; benchmark() The training was performed, and the training and test sets were evaluated separately after training (costs&ce); accepts four parameters, all of which have default parameters except data; data is the incoming data, where the target column (i.e. the column where the ID database name is located) must have the column name "class", and all columns are of type factor.
-
-The first thing that needs to be done is the initial selection of a machine learning classification model, where multiple models are trained and the most suitable ones are selected; The `row_num` parameter determines the number of data items to be used, if the data is large then a portion of the data will be extracted for testing, otherwise, all of the data will be used for testing. This step requires the use of the original dataset rather than the balanced dataset.
-
-```{r echo=FALSE, message=FALSE, hide=TRUE,cache=TRUE}
-result <- mi_run_bmr(data_fct, row_num = 4000)
-benchmark <- result[1]
-score <- result[2] %>% as.data.table() %T>% print()
-```
-
-The results were used to determine the choice of models for decision trees, random forests, and extreme gradient boosting.
-
-```{R}
-train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~tidyr::replace_na(.x,0))) 
-#%>% dplyr::slice(sample(nrow(data_blcd[[1]]), 2000), preserve = TRUE) 
+train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~tidyr::replace_na(.x,0)))%>% dplyr::slice(sample(nrow(data_blcd[[1]]), 10000), preserve = TRUE) 
 test = data_blcd[[2]]
+print(train %>% group_by(class) %>% summarize(n = n()))
+print(data_fct %>% group_by(class) %>% summarize(n = n()))
+```
+
+After data balancing, the number of majority and minority classes are generally balanced.
+
+### Models Tuning
+
+MantaID contains four machine-learning submodels: Classification and Regression Tree (CART), Random Forest (RF), eXtreme Gradient Boosting (XGBoost), and Back Propagation Neural Network (BPNN). 
+For the first three models, we achieve `hyperband` tuning to find the best parameter configurations based on `mlr3hyperband` package. For further understanding of `hyperband` algorithm, please visit [here](https://arxiv.org/abs/1603.06560). In each iteration, a complete run of sequential halving is executed. In it, after evaluating each configuration on the same subset size, only a fraction of `1/eta` of them ‘advances’ to the next round. The paramter `eta` is default set to 3.
+	In the `mi_tune_*` function, except for the performing of `hyperband` tuning, the stage plots are also drawn to manifest the "competition" between different parameter configurations.
+	
+```{R,cache=TRUE}
 #Decision Tree
-inst_rp <- mi_tune_rp(train, test)
+inst_rp <- mi_tune_rp(train, eta = 3, resampling = rsmp("bootstrap", ratio = 0.8, repeats = 3))
+#Random Forest
+inst_rg <- mi_tune_rg(train, eta = 3, resampling = rsmp("bootstrap", ratio = 0.8, repeats = 3))
+#Xgboost
+inst_xgb <- mi_tune_xgb(train, eta = 3, resampling = rsmp("bootstrap", ratio = 0.8, repeats = 3))
+
+inst_rp[[2]]
+inst_rg[[2]]
+inst_xgb[[2]]
+```
+
+### Models Training
+
+After tuning, the optimal parameter configuration calculated can be used for the following training by passing the tuner instances to the `mi_train_*` function.
+	
+```{R warning=FALSE, R,cache=TRUE}
+#Decision Tree
 result_rp <- mi_train_rp(train, test, measure = msr("classif.acc"), instance = inst_rp[[1]])
 #Random Forest
-inst_rg <- mi_tune_rg(train, test)
 result_rg <- mi_train_rg(train, test, measure = msr("classif.acc"), instance = inst_rg[[1]])
 #Xgboost
-inst_xgb <- mi_tune_xgb(train, test)
 result_xgb <- mi_train_xgb(train, test, measure = msr("classif.acc"), instance = inst_xgb[[1]])
-```
 
-In addition to several classical machine learning algorithms, a BP neural network is used for classification.
-
-This is achieved by calling `tensorflow` via the `keras` package, so `tensorflow` needs to be installed first. 
-
-1. To install python and tensorflow dependencies, please follow the instructions provided by Tensorflow via [TensorFlow installation](https://www.tensorflow.org/install/pip?hl=zh-cn#system-install)
-
-2. Use tensorflow in R. Please replace "/path/to/python.exe" with your python path.
-
-```R
-install.packages("reticulate")
-library(reticulate)
-library(tensorflow)
-path_to_python <- use_python(python = "/path/to/python.exe")
-```
-
-The meaning of parameters are (1) `train`, the training set; (2) `test`, the test set; (3) `path2save`, the path of the trained model, the default is NULL, not saved; (4) `batch_size`, the size of the training batch, the larger the training period, the shorter the training period, but the number of periods to achieve the same accuracy increases (5) `epochs`, the number of training periods, all samples are trained once; (6) `validation_split`, the proportion of data sets in the training set that are used to divide into validation sets.
-
-```{R message=FALSE, include=FALSE}
+#BPNN
 result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
 ```
 
-## Models Explaining
-
-`mi_get_confusion`, converts the results of model training into an obfuscation matrix; the results of the model training function are used directly as input; `ifnet`, a logical value, TRUE for a neural network model; `mi_plot_heatmap`, plots the heatmap for the confusion matrix; `name`, the model name, the suffix when the file is stored; `filepath`, the path when the model is stored.
-
-```{R,cache=TRUE}
+### Models Explaining
+To evaluate the performance of models, the confusion matrices of test set are calculated and visualized with heatmap. Each row of the matrix represents the instances in an actual class while each column represents the instances in a predicted class, or vice versa. 
+	
+```{R,cache=TRUE fig.height=20, fig.width=22, R,cache=TRUE}
 matri_rp <- mi_get_confusion(result_rp)
 matri_rg <- mi_get_confusion(result_rg)
 matri_xgb <- mi_get_confusion(result_xgb)
@@ -156,7 +154,26 @@ mi_plot_heatmap(matri_xgb, name="xgb",filepath = "Graph/")
 mi_plot_heatmap(matri_BP, name="BP",filepath = "Graph/")
 ```
 
-```{r,cache=TRUE}
+In the heatmaps, the value in the squares depicts the number of samples whose actual classes are `Reference`, while predicted as `Prediction`. For clarity, zero values are omitted. 
+MantaID implements submodel unification based on a new method. For cases with a majority class in prediction results, MantaID adopts the voting method directly, while for cases with scattered opinions, MantaID calculates the score of results of each model to find the optimal result. 
+
+```{R,cache=TRUE}
 data("mi_data_rawID")
-MantaID:::mi_unify_mod(mi_data_rawID, "ID",result_rg,result_rp,result_xgb,result_BP,c_value = 0.75, pad_len = pad_len)
+data = mi_data_rawID
+final_result = mi_unify_mod(data, "ID",result_rg,result_rp,result_xgb,result_BP,c_value = 0.75, pad_len = pad_len)
+final_result
+```
+	The `integrated` column is the final result MantaID determined. 
+	To prove the effectiveness of unification method, we can compare the balance accuracy by classes of test set. The integrated model inherits the individual models' strengths well, scoring high in almost all classes when compared to the sub-models. 
+```{R,cache=TRUE}
+balance_accuracy = map_dfc(as.list(final_result),function(x){
+	confusion = confusionMatrix(data = x,reference = data$class)$byClass %>% as.data.frame()
+	return(confusion%>% select(`Balanced Accuracy`))
+}) %>% set_names(names(final_result))
+balance_accuracy
+```	
+### Session information
+
+```{R}
+sessionInfo()
 ```
