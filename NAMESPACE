@@ -3,6 +3,7 @@
 export(mi)
 export(mi_balance_data)
 export(mi_clean_data)
+export(mi_filter_feat)
 export(mi_get_ID)
 export(mi_get_ID_attr)
 export(mi_get_confusion)

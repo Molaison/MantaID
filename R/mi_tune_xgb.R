@@ -15,7 +15,10 @@ globalVariables(".")
 #' @return A list of tuning instance and stage plot.
 #' @export
 mi_tune_xgb <- function(data, resampling = rsmp("cv", folds = 5), measure = msr("classif.acc"), eta = 3) {
+<<<<<<< HEAD
   #construct ParamSets and limit parameter ranges in a succinct and readable way
+=======
+>>>>>>> e4a31bf8e8bfd78e4bd6194b5face3b1c9518aeb
   search_space <- ps(
     max_depth = p_int(lower = 6, upper = 12),
     subsample = p_dbl(lower = 0.8, upper = 1),
@@ -24,6 +27,7 @@ mi_tune_xgb <- function(data, resampling = rsmp("cv", folds = 5), measure = msr(
     eta = p_dbl(lower = 0, upper = 0.3),
     nrounds = p_int(lower = 1, upper = 40, tags = "budget")
   )
+<<<<<<< HEAD
   #Repeat sampling.
   data %<>% slice(sample(nrow(.), nrow(.)))
   #Initialize the xgboost learner.
@@ -34,6 +38,13 @@ mi_tune_xgb <- function(data, resampling = rsmp("cv", folds = 5), measure = msr(
     #Convert to a classification task.
     as_task_classif(target = "class", feature = -c("class"))
   #Tune the xgboost learner by hyperband.
+=======
+  data %<>% slice(sample(nrow(.), nrow(.)))
+  learner <- lrn("classif.xgboost", nthread = 12)
+  task <- data %>%
+    as.data.table() %>%
+    as_task_classif(target = "class", feature = -c("class"),id = "tune")
+>>>>>>> e4a31bf8e8bfd78e4bd6194b5face3b1c9518aeb
   instance <- tune(
     method = tnr("hyperband", eta = 3),
     task = task,
@@ -42,7 +53,10 @@ mi_tune_xgb <- function(data, resampling = rsmp("cv", folds = 5), measure = msr(
     measures = measure,
     search_space = search_space
   )
+<<<<<<< HEAD
   #View the results.
+=======
+>>>>>>> e4a31bf8e8bfd78e4bd6194b5face3b1c9518aeb
   result <- instance$archive$data
   hyperband_group <- result %<>% bind_cols(hyperband = str_c(result$max_depth, result$subsample, result$min_child_weight, result$eta)) %>% mutate("stage" = .data[["stage"]] + 1)
   fct <- hyperband_group %>%

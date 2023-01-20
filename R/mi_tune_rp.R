@@ -13,13 +13,17 @@
 #' @return A list of tuning instance and stage plot.
 #' @export
 mi_tune_rp <- function(data, resampling = rsmp("bootstrap", ratio = 0.8, repeats = 5), measure = msr("classif.acc"), eta = 3) {
+<<<<<<< HEAD
   #construct ParamSets and limit parameter ranges in a succinct and readable way.
+=======
+>>>>>>> e4a31bf8e8bfd78e4bd6194b5face3b1c9518aeb
   search_space <- ps(
     cp = p_dbl(lower = 0.0005, upper = 0.01),
     maxdepth = p_int(lower = 10, upper = 30),
     minsplit = p_int(lower = 1, upper = 40, tags = "budget"),
     maxcompete = p_int(lower = 1, upper = 10)
   )
+<<<<<<< HEAD
   #Repeat sampling.
   data %<>% dplyr::slice(sample(nrow(.), nrow(.)))
   #Initialize the decision tree learner.
@@ -30,6 +34,13 @@ mi_tune_rp <- function(data, resampling = rsmp("bootstrap", ratio = 0.8, repeats
     #Convert to a Classification Task.
     as_task_classif(target = "class", feature = -c("class"))
   #Tune the decision tree learner by hyperband
+=======
+  data %<>% slice(sample(nrow(.), nrow(.)))
+  learner <- lrn("classif.rpart", keep_model = F)
+  task <- data %>%
+    as.data.table() %>%
+    as_task_classif(target = "class", feature = -c("class"),id = "tune")
+>>>>>>> e4a31bf8e8bfd78e4bd6194b5face3b1c9518aeb
   instance <- tune(
     method = tnr("hyperband", eta = 3),
     task = task,
@@ -38,9 +49,13 @@ mi_tune_rp <- function(data, resampling = rsmp("bootstrap", ratio = 0.8, repeats
     measures = measure,
     search_space = search_space
   )
+<<<<<<< HEAD
   #View the results.
   result <- instance$archive$data
 
+=======
+  result <- instance$archive$data
+>>>>>>> e4a31bf8e8bfd78e4bd6194b5face3b1c9518aeb
   hyperband_group <- result %<>% bind_cols(hyperband = str_c(result$maxdepth, result$maxcompete, result$cp)) %>% mutate("stage" = .data[["stage"]] + 1)
   fct <- hyperband_group %>%
     pull(.data[["hyperband"]]) %>%

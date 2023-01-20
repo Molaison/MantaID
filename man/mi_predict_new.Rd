@@ -4,7 +4,7 @@
 \alias{mi_predict_new}
 \title{Predict new data with a trained learner.}
 \usage{
-mi_predict_new(data, learner)
+mi_predict_new(data, result, ifnet = F)
 }
 \arguments{
 \item{data}{A dataframe.}

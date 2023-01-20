@@ -9,3 +9,7 @@
 readme.md
 MantaID_tutorial.Rmd
 ^\.httr-oauth$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$

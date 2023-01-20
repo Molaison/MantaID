@@ -11,7 +11,8 @@ mi_train_BP(
   path2save = NULL,
   batch_size = 128,
   epochs = 64,
-  validation_split = 0.3
+  validation_split = 0.3,
+  verbose = 0
 )
 }
 \arguments{
