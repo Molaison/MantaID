@@ -1,4 +1,4 @@
-# MantaID  <img src="reference/figures/logo.svg" align="right" width="18%" height="18%" />
+# MantaID <a href="https://molaison.github.io/MantaID/"><img src="man/figures/logo.svg" align="right" height="139" /></a>
 
 ## Introduction
 
