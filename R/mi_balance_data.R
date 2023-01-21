@@ -18,7 +18,7 @@
 #' mi_balance_data(data)
 mi_balance_data <- function(data, ratio = 0.3, parallel = FALSE) {
   system.time({
-    # The multicategorical data were balanced by random sampling of the undersampled samples and the oversampling part was sampled by the smote method to obtain relatively balanced data;
+    # The multicategorical data were balanced by random sampling of the undersampled samples and the oversampling part was sampled by the smote method to obtain relatively balanced data. Speedup usually occurs only if there are many classes using one of the slower resampling techniques。
     if (parallel) {
       data_smtd <- SCUT_parallel(data, "class", oversample = oversample_smote, undersample = resample_random)
     } else {
@@ -27,6 +27,7 @@ mi_balance_data <- function(data, ratio = 0.3, parallel = FALSE) {
   })
   # Difference between the balanced data set and the pre-balanced data set, as the training set
   train_new <- setdiff(data_smtd, data)
+  #Create a classification task
   task <- data %>%
     as.data.table() %>%
     as_task_classif(target = "class", feature = -"class")

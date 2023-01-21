@@ -1,0 +1,67 @@
+---
+title: "Methodology"
+author: "cao miyuan"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## MantaID web application
+
+MantaID contrives an easy-to-use two-part web application for ID identification. 
+Additionally, an R package is offered, accessible via [MantaID](https://bitbucket.org/Molaison/mantaid/src/main/) and API via [MantaIDapi](http://164.92.98.237/MantaIDapi/__docs__/).
+
+## Overview of workflow and functionality
+
+The MantaID web app includes different major functionalities and workflows.    
+**1.Data Retrieving**: Search public databases for and download ID datasets.     
+**2.Data Processing**: Convert ID data into the format required for training.    
+**3.Data Balancing**: Balance the training datasets' minority and majority classes.     
+**4.Models Training**: Train the models using the divided training set.    
+The results were used to determine the choice of models for Decision Tree (DT), Random Forest (RF), eXtreme Gradient Boosting (XGBoost) and Back Propagation Neural Network (BPNN) .      
+**5.Models Explaining**: The heatmap of the model and confusion matrix is returned after training.   
+
+## How to use the MantaID web application
+
+You can go through the following two sections
+
+### The first section implements crawler-based ID identification (**on the top page**).
+
+**1. Enter the ID you want to search for in the search box. **   
+**2. Click the search button to start the recognition process.** Each database match is presented in a progress bar box during the identification process, while each successful match is displayed on a page that can be visited instantly by clicking on a hyperlink or saved as a local file.     
+Modifiers are added after the true name in the returned “name” column to distinguish between the identical entities within databases, enabling an ID query to identify all matched biological entities such as a gene, protein, or transcript, etc.         
+**3. Furthermore, MantaID offers advanced search options:**    
+&emsp;&emsp;3.1. The user may specify the maximum time for accessing each entry.    
+&emsp;&emsp;3.2. The user can select whether to go directly to the associated database using the URL we provide.    
+&emsp;&emsp;3.3. The user can specify the type of object indicated by the ID.      
+&emsp;&emsp;3.4. The user can select between global and rapid search. 
+  
+### The second section implements an ID identification solution based on machine learning (**on the second page**).
+
+**1. Upload Data**        
+&emsp;&emsp;1.1. *Uploading a csv file.* The csv file contains the IDs that need to be predicted, with the columns of the IDs selected below. If you want to use this data for training, the database to which the IDs belong (i.e. class) is required.    
+&emsp;&emsp;1.2. *Using the sample file.* A 5000 line csv file is provided for users to test the functionality of the MantaID app, for prediction or for training.    
+&emsp;&emsp;1.3. *Through text input box.* After uploading a csv or using a sample file, the text input box will be updated to show the corresponding IDs, or you can input the IDs by typing.        
+**2. Split IDs**.    
+&emsp;&emsp;2.1. *Vector completion.* Complete the string with '*' to the length of the longest ID.        
+&emsp;&emsp;2.2. *Column split.* Split the string into a vector of single characters and complete the character vector to the maximum vector length.    
+**3. Encode Characters**    
+&emsp;&emsp;3.1. *Digitization.* Convert the feature column to a numeric vector.       
+&emsp;&emsp;3.2. *Factorization.* Convert the target column to factor type and discretize it.
+**4. Predict**    
+Prediction of the input IDs using the trained models:    
+&emsp;&emsp;4.1. *BPNN*: Back Propagation Neural Network.      
+&emsp;&emsp;4.2. *DT*: Decision Tree.       
+&emsp;&emsp;4.3. *RF*: Random Forest.         
+&emsp;&emsp;4.4. *XGB*: eXtreme Gradient Boosting.      
+&emsp;&emsp;4.5. *Integrated*: The final results are determined by combining the performance of the four models against different databases.     
+**5. Train**     
+MantaID enables users to train new models with their own data, allowing local work. For training the new model, users need to additionally select the column where the class is located.
+Before training, the following options need to be specified:    
+&emsp;&emsp;5.1. *Percentage of train set*: the percentage of the uploaded data used as the training set.    
+&emsp;&emsp;5.2. *Processing of confusion matrix*: the meaning of the values in each square of the heat map. If Normalization, the value represents the percentage of each square in the same class. If None, the value represents the number of predicted classes.      
+&emsp;&emsp;5.3. *Model to train*: the model used in training.
+

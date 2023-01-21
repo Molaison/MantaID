@@ -20,6 +20,7 @@
 #' )
 #' mi_clean_data(data)
 mi_clean_data <- function(data, cols = everything(), placeholder = c("-")) {
+  #Create a 2-column tibble data box with the column names "ID" and "class", and convert the elements to characters.
   data %<>% as_tibble() %>%
     select(cols) %>%
     mutate_at(colnames(.), ~ as.character(.x)) %>%
@@ -30,6 +31,7 @@ mi_clean_data <- function(data, cols = everything(), placeholder = c("-")) {
       names_repair = "minimal"
     ) %>%
     select("ID", "class")
+  #Re-arrange the tibble data box according to the ID column, eliminating rows with "-" in the ID.
   index <- map(data %>% pull("ID"), ~ !.x %in% placeholder)
   data %>% slice(which(index == TRUE))
 }
