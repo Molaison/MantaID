@@ -44,7 +44,7 @@ library(reticulate)
 # path_to_python <- use_python(python = "/path/to/python.exe")
 ```
 
-### Data Preprocessing
+### Data preprocessing
 
 This section illustrates how to procure data for training with `biomaRt` package. To give `MantaID` a test drive, we use human genome-related datasets to train a `MantaID` model. Users can specify another dataset or use customized IDs data.
 First, use `mi_get_ID_attr` function to get the attributes of the dataset associated with the ID. Then, with the attributes screened out, retrieve the corresponding data as a data frame with two columns, `ID` and `class`.
@@ -79,7 +79,7 @@ data_fct = mi_to_numer(data_splt,levels = c("*", 0:9, letters, LETTERS, "_", "."
 
 Features are then all converted to numeric type while the target column `class` remains `factor` type.
 
-### Data Balancing
+### Data balancing
 
 To prevent the trained model from losing its ability to distinguish between databases with small numbers of IDs, it is necessary to balance the data. On the one hand, the smote method is used to oversample databases with small numbers of IDs to increase the data density, and on the other hand, databases with large numbers of IDs are undersampled through random sampling to reduce the number of IDs.
 
@@ -95,7 +95,7 @@ print(data_fct %>% group_by(class) %>% summarize(n = n()))
 
 After data balancing, the number of majority and minority classes are generally balanced.
 
-### Model Optimizing
+### Model optimizing
 
 MantaID contains four machine-learning submodels: Classification and Regression Tree (CART), Random Forest (RF), eXtreme Gradient Boosting (XGBoost), and Back Propagation Neural Network (BPNN). 
 For the first three models, we achieve `hyperband` tuning to find the best parameter configurations based on `mlr3hyperband` package. For further understanding of `hyperband` algorithm, please visit [here](https://arxiv.org/abs/1603.06560). In each iteration, a complete run of sequential halving is executed. In it, after evaluating each configuration on the same subset size, only a fraction of `1/eta` of them ‘advances’ to the next round. The paramter `eta` is default set to 3.
@@ -114,7 +114,7 @@ inst_rg[[2]]
 inst_xgb[[2]]
 ```
 
-### Model Training
+### Model training
 
 After tuning, the optimal parameter configuration calculated can be used for the following training by passing the tuner instances to the `mi_train_*` function.
 	
