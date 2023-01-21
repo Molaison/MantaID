@@ -44,7 +44,7 @@ library(reticulate)
 # path_to_python <- use_python(python = "/path/to/python.exe")
 ```
 
-### Data preparation
+### Data Preprocessing
 
 This section illustrates how to procure data for training with `biomaRt` package. To give `MantaID` a test drive, we use human genome-related datasets to train a `MantaID` model. Users can specify another dataset or use customized IDs data.
 First, use `mi_get_ID_attr` function to get the attributes of the dataset associated with the ID. Then, with the attributes screened out, retrieve the corresponding data as a data frame with two columns, `ID` and `class`.
@@ -95,7 +95,7 @@ print(data_fct %>% group_by(class) %>% summarize(n = n()))
 
 After data balancing, the number of majority and minority classes are generally balanced.
 
-### Models Tuning
+### Model Optimizing
 
 MantaID contains four machine-learning submodels: Classification and Regression Tree (CART), Random Forest (RF), eXtreme Gradient Boosting (XGBoost), and Back Propagation Neural Network (BPNN). 
 For the first three models, we achieve `hyperband` tuning to find the best parameter configurations based on `mlr3hyperband` package. For further understanding of `hyperband` algorithm, please visit [here](https://arxiv.org/abs/1603.06560). In each iteration, a complete run of sequential halving is executed. In it, after evaluating each configuration on the same subset size, only a fraction of `1/eta` of them ‘advances’ to the next round. The paramter `eta` is default set to 3.
@@ -114,7 +114,7 @@ inst_rg[[2]]
 inst_xgb[[2]]
 ```
 
-### Models Training
+### Model Training
 
 After tuning, the optimal parameter configuration calculated can be used for the following training by passing the tuner instances to the `mi_train_*` function.
 	
@@ -130,7 +130,7 @@ result_xgb <- mi_train_xgb(train, test, measure = msr("classif.acc"), instance =
 result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3)
 ```
 
-### Models Explaining
+### Performance
 To evaluate the performance of models, the confusion matrices of test set are calculated and visualized with heatmap. Each row of the matrix represents the instances in an actual class while each column represents the instances in a predicted class, or vice versa. 
 	
 ```R
