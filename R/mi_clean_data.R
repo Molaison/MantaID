@@ -3,7 +3,6 @@
 #' @param data A dataframe or tibble or data.table or matrix. Names of the column will be regard as the class of ID included in column.
 #' @param placeholder Character vectors. IDs included in `placeholder` will be omitted.
 #' @param cols Character vectors. Columns of `data` that contain the IDs
-#'
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr select mutate_at pull slice
 #' @importFrom tidyselect everything
@@ -20,7 +19,7 @@
 #' )
 #' mi_clean_data(data)
 mi_clean_data <- function(data, cols = everything(), placeholder = c("-")) {
-  #Create a 2-column tibble data box with the column names "ID" and "class", and convert the elements to characters.
+  #Create a 2-column tibble dataframe with the column names "ID" and "class", and convert the elements to characters.
   data %<>% as_tibble() %>%
     select(cols) %>%
     mutate_at(colnames(.), ~ as.character(.x)) %>%

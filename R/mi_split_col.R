@@ -34,7 +34,7 @@ mi_split_col <- function(data, cores = NULL, pad_len = 10) {
   clusterEvalQ(cl, c(library(magrittr)))
   #Parallel Computing.
   output <- parSapply(cl, data[, 1][[1]], mi_split_str, pad_len)
-  #Stop the cluster
+  #Stop the cluster.
   stopCluster(cl)
   #Output final result and reset column names.
   output %>%

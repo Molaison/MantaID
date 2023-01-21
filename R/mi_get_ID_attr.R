@@ -14,7 +14,7 @@
 mi_get_ID_attr <- function(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia") {
   #Connect to selected BioMart databases and datasets hosted by Ensemble.
   ensemb_hm_dset <- useEnsembl(biomart = biomart, dataset = dataset, mirror = mirror, verbose = TRUE)
-  #Filter attributes from the description column that contain ID or name but not end, start, description, probe, version, content, Aberrant,Source,Strain ,Chromosome,BioGrid,evidence and are less than 18 characters long
+  #Filter attributes from the description column that contain ID or name but not end, start, description, probe, version, content, Aberrant,Source,Strain ,Chromosome, BioGrid, evidence and are less than 18 characters long.
   attributes <- listAttributes(ensemb_hm_dset) %>%
     filter(grepl(.[["description"]], pattern = "([iI][dD])|(name)", ignore.case = TRUE)) %>%
     filter(!grepl(.[["description"]], pattern = "(end)|(start)|(description)|(probe)|(version)|(content)|(Aberrant)|(Source)|(Strain)|(Chromosome)|(BioGRID)|(evidence)", ignore.case = TRUE)) %>%

@@ -16,7 +16,7 @@ mi_plot_heatmap <- function(table, name = NULL, filepath = NULL) {
   melted <- table %>%
     as.table() %>%
     melt()
-  #Heat map with ggplot2.
+  #Heatmap with ggplot2.
   heat <- ggplot(melted, aes(x = .data[["Reference"]], y = .data[["Prediction"]], fill = .data[["value"]])) +
     geom_tile() +
     geom_text(aes(label = na_if(round(.data[["value"]], 2), 0)), color = "#00468B99", size = 2) +
@@ -38,7 +38,7 @@ mi_plot_heatmap <- function(table, name = NULL, filepath = NULL) {
       ),
       axis.title = element_text(size = 40)
     )
-  #Save heat map.
+  #Save heatmap.
   if (!is.null(filepath)) {
     ggsave(str_c(filepath, "heatmap_", name, ".png"), width = 22.37, height = 20, plot = heat, device = "png", dpi = 600)
   }

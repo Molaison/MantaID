@@ -16,56 +16,41 @@
 #' @importFrom stringr str_c
 #' @return A `list` object containing the prediction confusion matrix, the `model` object, and the mapping of predicted numbers to classes.
 #' @export
-<<<<<<< HEAD
-mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3) {
+#'
+mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3,verbose = 0) {
   #Rename the column names of the cls columns of the training set.
   train <- train %>%
-    dplyr::rename("class" = cls)
+    rename("class" = cls)
   #Rename the column names of the cls columns of the test set.
   test <- test %>%
-   dplyr::rename("class" = cls)
+    rename("class" = cls)
   #The class column of the training set is removed and the values of the other columns are converted to numerical form, and then converted to matrix form to redefine it as the training set.
-=======
-mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size = 128, epochs = 64, validation_split = 0.3,verbose = 0) {
-  train <- train %>%
-    rename("class" = cls)
-  test <- test %>%
-    rename("class" = cls)
->>>>>>> e4a31bf8e8bfd78e4bd6194b5face3b1c9518aeb
   train_set <- train %>%
     mutate(across(.cols = -class, .fns = as.numeric)) %>%
     select(-class) %>%
     as.matrix()
-<<<<<<< HEAD
   #Remove the class column of the test set and convert the values of the other columns to numeric form, then convert them to matrix form and redefine them as a test set.
-=======
->>>>>>> e4a31bf8e8bfd78e4bd6194b5face3b1c9518aeb
   test_set <- test %>%
     mutate(across(.cols = -class, .fns = as.numeric)) %>%
     select(-class) %>%
     as.matrix()
-<<<<<<< HEAD
   #Convert the class columns of the training set into factor types, then into numeric types, and finally into binary class matrices.
-=======
-
->>>>>>> e4a31bf8e8bfd78e4bd6194b5face3b1c9518aeb
   train_target <- train$class %>%
     factor() %>%
     as.numeric() %>%
     to_categorical()
+  #Remove the first column
   train_target <- train_target[, -c(1)]
+  #Convert the class columns of the test set into factor types, then into numeric types, and finally into binary class matrices.
   test_target <- test$class %>%
     factor() %>%
     as.numeric() %>%
     to_categorical()
+  #Remove the first column
   test_target <- test_target[, -c(1)]
-<<<<<<< HEAD
   #Define a keras sequential model.
   model <- keras_model_sequential()
   #The input layer, feature layer, task layer, and activation layer are assembled into a Model.
-=======
-  model <- keras_model_sequential()
->>>>>>> e4a31bf8e8bfd78e4bd6194b5face3b1c9518aeb
   model %>%
     layer_dense(units = 40, input_shape = ncol(train_set)) %>%
     layer_activation_relu() %>%
@@ -73,22 +58,17 @@ mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size
     layer_activation_relu() %>%
     layer_dense(units = ncol(train_target), activation = "softmax")
   summary(model)
-<<<<<<< HEAD
   #Compile the defined model with metric = accuracy and optimiser as adam.
-=======
-
->>>>>>> e4a31bf8e8bfd78e4bd6194b5face3b1c9518aeb
   model %>% compile(
     loss = "categorical_crossentropy",
     optimizer = optimizer_adam(),
     metrics = list("categorical_accuracy")
   )
-<<<<<<< HEAD
   #Fit the model on the training dataset
   history <- model %>% fit(
     x = train_set, y = train_target,
     epochs = epochs, batch_size = batch_size,
-    validation_split = 0.3, verbose = 2
+    validation_split = 0.3,verbose = 0
   )
   #Save model
   if (!is.null(path2save)) {
@@ -109,25 +89,6 @@ mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size
   prd_net <- confusionMatrix(response, test$class)
   #Evaluate model
   score <- model %>% evaluate(test_set, test_target)
-  #Output the model, confusion matrix, and level as a list.
-=======
-
-  history <- model %>% fit(
-    x = train_set, y = train_target,
-    epochs = epochs, batch_size = batch_size,
-    validation_split = 0.3,verbose = 0
-  )
-  if (!is.null(path2save)) {
-    save_model_tf(model, str_c(path2save, "/result_net"))
-  }
-  predictions <- predict(model, test_set)
-  response <- predictions %>% k_argmax()
-  response <- response$numpy() %>%
-    as.numeric(.)
-  level <- levels(test$class)
-  response <- level[response + 1] %>% factor(level)
-  prd_net <- confusionMatrix(response, test$class)
-  score <- model %>% evaluate(test_set, test_target)
->>>>>>> e4a31bf8e8bfd78e4bd6194b5face3b1c9518aeb
+  #Output the model, confusion matrix and levels as a list.
   return(list(model, prd_net, level))
 }

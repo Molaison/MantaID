@@ -36,6 +36,6 @@ mi_train_rp <- function(train, test, measure = msr("classif.acc"), instance = NU
   learner$train(task_train, row_ids = train_set)
   #Predict model.
   predict <- learner$predict(task_predict, row_ids = test_set)
-  #Output the results of training and prediction as a list.
+  #Output the learner for predicting and predicted result as a list.
   list(learner, predict)
 }

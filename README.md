@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This tutorial introduces MantaID, a machine-learning-based tool to automate the identification of biological database IDs. IDs are required for simple access to biological data and for facilitating cross-referencing between databases. However, due to the lack of universal agreement on the composition of a database ID, resulting in the situation that the same biological entity may have various IDs. Current ID conversion tools all require previous knowledge of the database to which they belong and are incapable of identifying the IDs in the absence of database names. MantaID bridges this gap enabling the identification of IDs, facilitating the text-mining in scientific documents and ID conversion. Additionally, a shiny application is offered, accessible via [MantaID (shinyapps.io)](https://molaison.shinyapps.io/MantaID/) and API via [MantaIDapi](http://164.92.98.237/MantaIDapi/__docs__/).
+This tutorial introduces MantaID, a machine-learning-based tool to automate the identification of biological database IDs. IDs are required for simple access to biological data and for facilitating cross-referencing between databases. However, the lack of universal agreement on the composition of a database ID, results in the situation that the same biological entity may have various IDs. Current ID conversion tools all require previous knowledge of the database to which they belong and are incapable of identifying the IDs in the absence of database names. MantaID bridges this gap enabling the identification of IDs, facilitating the text-mining in scientific documents and ID conversion. Additionally, a shiny application is offered, accessible via [MantaID (shinyapps.io)](https://molaison.shinyapps.io/MantaID/) and API via [MantaIDapi](http://164.92.98.237/MantaIDapi/__docs__/).
 
 -------------
 
@@ -46,10 +46,10 @@ library(reticulate)
 
 ### Data preparation
 
-This section illustrates how to procure data for training with `biomaRt` package. To give `MantaID` a test drive, we use human genome-related datasets to train a `MantaID` model. Users can specify another dataset or use customized IDs data.
+This section illustrates how to procure data for training with `biomaRt` package. To give `MantaID` a test drive, we use human genome-related datasets to train a `MantaID` model. Users can specify another dataset or use customized ID data.
 First, use `mi_get_ID_attr` function to get the attributes of the dataset associated with the ID. Then, with the attributes screened out, retrieve the corresponding data as a data frame with two columns, `ID` and `class`.
 ```R
-attributes = mi_get_ID_attr(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia") %>% slice(1:10)
+attributes = mi_get_ID_attr(biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia") %>% dplyr::slice(1:10)
 data_ID = mi_get_ID(attributes,biomart = "genes", dataset = "hsapiens_gene_ensembl", mirror = "asia")
 data_ID
 ```
