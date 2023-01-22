@@ -81,7 +81,7 @@ mi_train_BP <- function(train, test, cls = "class", path2save = NULL, batch_size
   #Create multi-dimensional arrays and convert them to numeric types.
   response <- response$numpy() %>%
     as.numeric(.)
-  #To get the levels
+  #To get the levels.
   level <- levels(test$class)
   #Modify level and convert to factor type.
   response <- level[response + 1] %>% factor(level)
