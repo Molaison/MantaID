@@ -9,12 +9,12 @@
 #' length <- 15
 #' mi_split_str(string_test, length)
 mi_split_str <- function(str, pad_len) {
-	#切割单个ID字符，并转换为向量
+	#Cut a single ID character and convert it to a vector.
 	str %>%
 	as.character() %>%
 	strsplit(split = "") %>%
 	unlist() %>%
-	#判断ID字符长度，选取最大字符长度，用“*”补足所有ID字符缺失的位置
+	#Determine the length of ID characters, select the maximum character length, and use "*" to fill in the missing positions of all ID characters.
 	c(., rep("*", ifelse((pad_len - length(.)) > 0, pad_len - length(.), 0))) %>%
 	.[1:pad_len] %>%
 	set_names(str_c("pos", 1:pad_len))
