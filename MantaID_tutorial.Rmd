@@ -183,7 +183,7 @@ MantaID implements submodel unification based on a new method. For cases with a 
 #Get the data file "mi_data_rawID".
 data("mi_data_rawID")
 #Change the file name to "data"
-data = mi_data_rawID
+data = mi_data_rawID %>% filter(class %in% unique(data_ID$class))
 #Prediction of the input IDs using the trained models.
 final_result = mi_unify_mod(data, "ID",result_rg,result_rp,result_xgb,result_BP,c_value = 0.75, pad_len = pad_len)
 #View the result.
