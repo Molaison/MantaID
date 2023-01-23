@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(eval = FALSE, include = FALSE)
+knitr::opts_chunk$set()
 ```
 
 ## Introduction
@@ -21,7 +21,7 @@ The computational framework and all the approaches of MantaID are implemented as
 
 This tutorial is based on R. If you have not installed R, you will find an introduction to run it in your computer [here](https://rstudio-education.github.io/hopr/starting.html). Before turning to the workflow, please install all the packages by running the code below.
 	
-```{R message=FALSE, warning=FALSE}
+```{R eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager",repos = "http://cran.us.r-project.org")
 if (!requireNamespace("remotes", quietly = TRUE))
@@ -46,7 +46,8 @@ Because deep-learning is achieved in MantaID by calling `tensorflow` via the `ke
 2. Use tensorflow in R. Please replace "/path/to/python.exe" with your python path.
 
 ```{R include=FALSE}
-install.packages("reticulate")
+if(!require("reticulate"))
+	install.packages("reticulate")
 library(reticulate)
 # path_to_python <- use_python(python = "/path/to/python.exe")
 ```
@@ -157,7 +158,7 @@ result_BP <- mi_train_BP(train, test, path2save = NULL, batch_size = 128, epochs
 ### Models Explaining
 To evaluate the performance of models, the confusion matrices of test set are calculated and visualized with heatmap. Each row of the matrix represents the instances in an actual class while each column represents the instances in a predicted class, or vice versa. 
 	
-```{R,cache=TRUE fig.height=20, fig.width=22, R,cache=TRUE}
+```{R,cache=TRUE ,fig.height=20, fig.width=22,cache=TRUE}
 #Obfuscation matrix about the decision tree is obtained.
 matri_rp <- mi_get_confusion(result_rp)
 #Obfuscation matrix about random forest is obtained.
