@@ -53,7 +53,7 @@ Because deep-learning is achieved in MantaID by calling `tensorflow` via the `ke
 ```R
 install.packages("reticulate")
 library(reticulate)
-# path_to_python <- use_python(python = "/path/to/python.exe")
+path_to_python <- use_python(python = "/path/to/python.exe")
 ```
 
 ### Data preprocessing
@@ -167,7 +167,7 @@ MantaID implements submodel unification based on a new method. For cases with a 
 
 ```R
 data("mi_data_rawID")
-data = mi_data_rawID %>% filter(class %in% unique(data_ID$class))
+data = mi_data_rawID %>% filter(class %in% unique(data_ID$class)) %>% mutate(across(class,~factor(.x)))
 final_result = mi_unify_mod(data, "ID",result_rg,result_rp,result_xgb,result_BP,c_value = 0.75, pad_len = pad_len)
 final_result
 ```
@@ -177,7 +177,7 @@ To prove the effectiveness of unification method, we can compare the balance acc
 
 ```R
 balance_accuracy = map_dfc(as.list(final_result),function(x){
-	confusion = confusionMatrix(data = x,reference = data$class)$byClass %>% as.data.frame()
+	confusion = confusionMatrix(data = factor(x,levels = levels(data$class)),reference = data$class)$byClass %>% as.data.frame()
 	return(confusion%>% select(`Balanced Accuracy`))
 }) %>% set_names(names(final_result))
 balance_accuracy
@@ -187,38 +187,44 @@ balance_accuracy
 
 ```R
 sessionInfo()
-# R version 4.2.0 (2022-04-22 ucrt)
-# Platform: x86_64-w64-mingw32/x64 (64-bit)
-# Running under: Windows 10 x64 (build 19044)
+# R version 4.4.1 (2024-06-14 ucrt)
+# Platform: x86_64-w64-mingw32/x64
+# Running under: Windows 11 x64 (build 22631)
 # 
 # Matrix products: default
 # 
+# 
 # locale:
-# 	[1] LC_COLLATE=Chinese (Simplified)_China.utf8  LC_CTYPE=Chinese (Simplified)_China.utf8   
-# [3] LC_MONETARY=Chinese (Simplified)_China.utf8 LC_NUMERIC=C                               
+# [1] LC_COLLATE=Chinese (Simplified)_China.utf8 
+# [2] LC_CTYPE=Chinese (Simplified)_China.utf8   
+# [3] LC_MONETARY=Chinese (Simplified)_China.utf8
+# [4] LC_NUMERIC=C                               
 # [5] LC_TIME=Chinese (Simplified)_China.utf8    
 # 
+# time zone: Asia/Shanghai
+# tzcode source: internal
+# 
 # attached base packages:
-# 	[1] stats     graphics  grDevices utils     datasets  methods   base     
+# [1] stats     graphics  grDevices utils     datasets  methods   base     
 # 
 # other attached packages:
-# 	[1] devtools_2.4.4 usethis_2.1.6 
+# [1] roxygen2_7.3.2
 # 
 # loaded via a namespace (and not attached):
-# 	[1] tidyselect_1.2.0    xfun_0.30           remotes_2.4.2       purrr_1.0.0        
-# [5] reshape2_1.4.4      vctrs_0.5.1         generics_0.1.3      miniUI_0.1.1.1     
-# [9] htmltools_0.5.4     yaml_2.3.5          utf8_1.2.2          rlang_1.0.6        
-# [13] pkgbuild_1.3.1      pkgdown_2.0.7       urlchecker_1.0.1    pillar_1.8.1       
-# [17] later_1.3.0         withr_2.5.0         glue_1.6.2          DBI_1.1.3          
-# [21] sessioninfo_1.2.2   lifecycle_1.0.3     plyr_1.8.7          stringr_1.5.0      
-# [25] htmlwidgets_1.5.4   memoise_2.0.1       evaluate_0.19       knitr_1.40         
-# [29] callr_3.7.3         fastmap_1.1.0       httpuv_1.6.7        ps_1.7.2           
-# [33] fansi_1.0.3         Rcpp_1.0.9          xtable_1.8-4        promises_1.2.0.1   
-# [37] BiocManager_1.30.19 cachem_1.0.6        desc_1.4.1          pkgload_1.3.0      
-# [41] mime_0.12           fs_1.5.2            digest_0.6.31       stringi_1.7.8      
-# [45] processx_3.8.0      dplyr_1.0.9         shiny_1.7.4         rprojroot_2.0.3    
-# [49] cli_3.5.0           tools_4.2.0         magrittr_2.0.3      tibble_3.1.8       
-# [53] profvis_0.3.7       crayon_1.5.2        pkgconfig_2.0.3     ellipsis_0.3.2     
-# [57] prettyunits_1.1.1   assertthat_0.2.1    rmarkdown_2.16      rstudioapi_0.14    
-# [61] R6_2.5.1            compiler_4.2.0     
+#  [1] utf8_1.2.4        generics_0.1.3    xml2_1.3.6        stringi_1.8.4    
+#  [5] digest_0.6.36     magrittr_2.0.3    evaluate_0.24.0   pkgload_1.4.0    
+#  [9] fastmap_1.2.0     rprojroot_2.0.4   plyr_1.8.9        processx_3.8.4   
+# [13] pkgbuild_1.4.4    sessioninfo_1.2.2 urlchecker_1.0.1  ps_1.7.7         
+# [17] promises_1.3.0    purrr_1.0.2       fansi_1.0.6       cli_3.6.3        
+# [21] shiny_1.8.1.1     crayon_1.5.3      rlang_1.1.4       ellipsis_0.3.2   
+# [25] remotes_2.5.0     withr_3.0.0       cachem_1.1.0      yaml_2.3.9       
+# [29] devtools_2.4.5    tools_4.4.1       reshape2_1.4.4    memoise_2.0.1    
+# [33] dplyr_1.1.4       httpuv_1.6.15     vctrs_0.6.5       R6_2.5.1         
+# [37] mime_0.12         lifecycle_1.0.4   stringr_1.5.1     fs_1.6.4         
+# [41] htmlwidgets_1.6.4 usethis_2.2.3     miniUI_0.1.1.1    pkgconfig_2.0.3  
+# [45] desc_1.4.3        callr_3.7.6       pkgdown_2.1.0     pillar_1.9.0     
+# [49] later_1.3.2       glue_1.7.0        profvis_0.3.8     Rcpp_1.0.13      
+# [53] xfun_0.46         tibble_3.2.1      tidyselect_1.2.1  rstudioapi_0.16.0
+# [57] knitr_1.48        xtable_1.8-4      htmltools_0.5.8.1 rmarkdown_2.27   
+# [61] compiler_4.4.1      
 ```
