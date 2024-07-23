@@ -50,6 +50,7 @@ if(!require("reticulate"))
 	install.packages("reticulate")
 library(reticulate)
 path_to_python <- use_python(python = "/path/to/python.exe")
+# path_to_python <- use_python(python = "D:/Python/Anaconda/envs/tensorflow/python.exe")
 ```
 
 ### Data preparation
