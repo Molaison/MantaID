@@ -184,7 +184,7 @@ MantaID implements submodel unification based on a new method. For cases with a 
 #Get the data file "mi_data_rawID".
 data("mi_data_rawID")
 #Change the file name to "data"
-data = mi_data_rawID %>% filter(class %in% unique(data_ID$class))
+data = mi_data_rawID %>% filter(class %in% unique(data_ID$class)) %>% mutate(across(class,~factor(.x)))
 #Prediction of the input IDs using the trained models.
 final_result = mi_unify_mod(data, "ID",result_rg,result_rp,result_xgb,result_BP,c_value = 0.75, pad_len = pad_len)
 #View the result.
@@ -196,7 +196,7 @@ To prove the effectiveness of unification method, we can compare the balance acc
 ```{R,cache=TRUE}
 #Balance accuracy
 balance_accuracy = map_dfc(as.list(final_result),function(x){
-	confusion = confusionMatrix(data = x,reference = data$class)$byClass %>% as.data.frame()
+	confusion = confusionMatrix(data = factor(x,levels = levels(data$class)),reference = data$class)$byClass %>% as.data.frame()
 	return(confusion%>% select(`Balanced Accuracy`))
 }) %>% set_names(names(final_result))
 #View the result.
