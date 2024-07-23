@@ -7,7 +7,7 @@
 #' @param epochs The number of epochs to train the model.
 #' @param cls A character.The name of the label column.
 #' @param validation_split Float between 0 and 1. Fraction of the training data to be used as validation data.
-#'
+#' @param verbose The verbosity mode.
 #' @importFrom dplyr rename mutate across select
 #' @importFrom keras to_categorical layer_activation_relu layer_dense keras_model_sequential save_model_tf k_argmax evaluate optimizer_adam fit compile
 #' @importFrom caret confusionMatrix
