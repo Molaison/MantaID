@@ -19,6 +19,18 @@ mi_unify_mod(
 \item{data}{A dataframe contains the ID column.}
 
 \item{col_id}{The name of ID column.}
+
+\item{result_rg}{The result from the Random Forest model.}
+
+\item{result_rp}{The result from the Decision Tree model.}
+
+\item{result_xgb}{The result from the XGBoost model.}
+
+\item{result_BP}{The result from the Backpropagation Neural Network model.}
+
+\item{c_value}{A numeric value used in the final prediction calculation.}
+
+\item{pad_len}{The length to pad the ID characters to.}
 }
 \value{
 A dataframe.

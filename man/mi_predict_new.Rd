@@ -9,7 +9,9 @@ mi_predict_new(data, result, ifnet = F)
 \arguments{
 \item{data}{A dataframe.}
 
-\item{learner}{An R6 class object.}
+\item{result}{The result object from a previous training.}
+
+\item{ifnet}{A boolean indicating if a neural network is used for prediction.}
 }
 \value{
 A data frame that contains features and 'predict' class.

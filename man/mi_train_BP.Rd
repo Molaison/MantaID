@@ -29,6 +29,8 @@ mi_train_BP(
 \item{epochs}{The number of epochs to train the model.}
 
 \item{validation_split}{Float between 0 and 1. Fraction of the training data to be used as validation data.}
+
+\item{verbose}{The verbosity mode.}
 }
 \value{
 A \code{list} object containing the prediction confusion matrix, the \code{model} object, and the mapping of predicted numbers to classes.
