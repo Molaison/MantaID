@@ -34,7 +34,7 @@ mi_tune_xgb <- function(data, resampling = rsmp("cv", folds = 5), measure = msr(
     as_task_classif(target = "class", feature = -c("class"),id = "tune")
   #Tune the xgboost learner by hyperband.
   instance <- tune(
-    method = tnr("hyperband", eta = 3),
+  	tuner = tnr("hyperband", eta = 3),
     task = task,
     learner = learner,
     resampling = resampling,
@@ -56,7 +56,7 @@ mi_tune_xgb <- function(data, resampling = rsmp("cv", folds = 5), measure = msr(
     scale_x_continuous(limits = c(0.5, max(hyperband_group$stage) + 0.5)) +
     scale_y_continuous(limits = c(min(hyperband_group$classif.acc), max(hyperband_group$classif.acc))) +
     theme_bw() +
-    guides(color = FALSE) +
+    guides(color = "none") +
     geom_point() +
     geom_line()
   #Output the tuning instance and stage plot as a list.

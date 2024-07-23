@@ -15,7 +15,7 @@
 mi_tune_rg <- function(data, resampling = rsmp("cv", folds = 5), measure = msr("classif.acc"), eta = 3) {
   #construct ParamSets and limit parameter ranges in a succinct and readable way
   search_space <- ps(
-    regularization.factor = p_dbl(lower = 0.01, upper = 1),
+    #regularization.factor = p_dbl(lower = 0.01, upper = 1),
     minprop = p_dbl(lower = 0.005, upper = 0.15, tags = "budget"),
     num.trees = p_int(lower = 100, upper = 600),
     max.depth = p_int(lower = 20, upper = 400)
@@ -30,7 +30,7 @@ mi_tune_rg <- function(data, resampling = rsmp("cv", folds = 5), measure = msr("
     as_task_classif(target = "class", feature = -c("class"),id = "tune")
   #Tune the random forest learner by hyperband.
   instance <- tune(
-    method = tnr("hyperband", eta = 3),
+  	tuner = tnr("hyperband", eta = 3),
     task = task,
     learner = learner,
     resampling = resampling,
@@ -52,7 +52,7 @@ mi_tune_rg <- function(data, resampling = rsmp("cv", folds = 5), measure = msr("
     scale_x_continuous(limits = c(0.5, max(hyperband_group$stage) + 0.5)) +
     scale_y_continuous(limits = c(min(hyperband_group$classif.acc), max(hyperband_group$classif.acc))) +
     theme_bw() +
-    guides(color = FALSE) +
+    guides(color = "none") +
     geom_point() +
     geom_line()
   #Output the tuning instance and stage plot as a list.
