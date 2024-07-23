@@ -1,7 +1,7 @@
 #' Predict new data with a trained learner.
 #' @param data A dataframe.
-#'
-#' @param learner An R6 class object.
+#' @param result The result object from a previous training.
+#' @param ifnet A boolean indicating if a neural network is used for prediction.
 #' @importFrom dplyr rename mutate across select bind_cols
 #' @importFrom tidyselect everything
 #' @importFrom data.table as.data.table
