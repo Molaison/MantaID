@@ -103,7 +103,7 @@ The performing of data balancing in the function `mi_balance_data` is based on `
 
 ```R
 data_blcd = mi_balance_data(data_fct,ratio = 0.3,parallel = F)
-train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~tidyr::replace_na(.x,0)))%>% dplyr::slice(sample(nrow(data_blcd[[1]]), 10000), preserve = TRUE) 
+train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~tidyr::replace_na(.x,0)))%>% dplyr::slice(sample(nrow(data_blcd[[1]]), 10000), .preserve = TRUE) 
 test = data_blcd[[2]]
 print(train %>% group_by(class) %>% summarize(n = n()))
 print(data_fct %>% group_by(class) %>% summarize(n = n()))

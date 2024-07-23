@@ -108,7 +108,7 @@ The performing of data balancing in the function `mi_balance_data` is based on `
 #Balance data.
 data_blcd = mi_balance_data(data_fct,ratio = 0.3,parallel = F)
 #Select the elements in the first column of the balanced data set, remove the class column, replace the missing values in the elements with 0, repeat the sampling to get 10,000 rows of data, and use them as the training set.
-train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~tidyr::replace_na(.x,0)))%>% dplyr::slice(sample(nrow(data_blcd[[1]]), 10000), preserve = TRUE) 
+train = data_blcd[[1]] %>% mutate(across(-class,.fns = ~tidyr::replace_na(.x,0)))%>% dplyr::slice(sample(nrow(data_blcd[[1]]), 10000), .preserve = TRUE) 
 #Select the test set.
 test = data_blcd[[2]]
 #Group the training set by class, calculate the summary statistics, and print the result.
