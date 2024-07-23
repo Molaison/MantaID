@@ -2,6 +2,12 @@
 #'
 #' @param data A dataframe contains the ID column.
 #' @param col_id The name of ID column.
+#' @param result_rg The result from the Random Forest model.
+#' @param result_rp The result from the Decision Tree model.
+#' @param result_xgb The result from the XGBoost model.
+#' @param result_BP The result from the Backpropagation Neural Network model.
+#' @param c_value A numeric value used in the final prediction calculation.
+#' @param pad_len The length to pad the ID characters to.
 #' @importFrom dplyr rename select mutate across bind_cols  summarise group_by
 #' @importFrom data.table as.data.table
 #' @importFrom keras k_argmax
@@ -27,7 +33,7 @@ mi_unify_mod <- function(data, col_id, result_rg, result_rp, result_xgb, result_
   #Converting data to numeric types.
   prd_new <- function(data, learner) {
     data %>%
-      mutate(across(.col = everything(), .fns = as.numeric))
+      mutate(across(.cols = everything(), .fns = as.numeric))
     #Call the learner to make predictions, transform the results into a table, combine the predictions with the data, select columns other than the true value and the original ID, and put the predictions in the first column.
     learner$predict_newdata(data) %>%
       as.data.table() %>%
