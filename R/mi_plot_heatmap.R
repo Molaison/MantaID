@@ -19,7 +19,7 @@ mi_plot_heatmap <- function(table, name = NULL, filepath = NULL) {
   #Heatmap with ggplot2.
   heat <- ggplot(melted, aes(x = .data[["Reference"]], y = .data[["Prediction"]], fill = .data[["value"]])) +
     geom_tile() +
-    geom_text(aes(label = na_if(round(.data[["value"]], 2), 0)), color = "#00468B99", size = 2) +
+    geom_text(aes(label = na_if(round(.data[["value"]], 2), 0)), color = "#00468B99", size = 2, na.rm = TRUE) +
     theme_bw() +
     coord_equal() +
     scale_fill_gradientn(colors = c("#ffffff", brewer.pal(5, "YlOrRd")), values = c(0, 4e-04, 4e-03, 4e-02, 0.2, 1)) +
