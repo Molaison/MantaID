@@ -35,7 +35,10 @@ library(remotes)
 library(BiocManager)
 if (!requireNamespace("biomaRt", quietly = TRUE))
 	BiocManager::install("biomaRt", version = "3.16")
-install_bitbucket("Molaison/MantaID")
+
+install.packages("devtools")
+library(devtools)
+install_github("Molaison/MantaID")
 ```
 
 Next, we load the `MantaID` package.
