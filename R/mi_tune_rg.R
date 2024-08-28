@@ -15,7 +15,7 @@
 mi_tune_rg <- function(data, resampling = rsmp("cv", folds = 5), measure = msr("classif.acc"), eta = 3) {
   #construct ParamSets and limit parameter ranges in a succinct and readable way
   search_space <- ps(
-    #regularization.factor = p_dbl(lower = 0.01, upper = 1),
+    regularization.factor = p_dbl(lower = 0.01, upper = 1),
     minprop = p_dbl(lower = 0.005, upper = 0.15, tags = "budget"),
     num.trees = p_int(lower = 100, upper = 600),
     max.depth = p_int(lower = 20, upper = 400)
@@ -23,7 +23,7 @@ mi_tune_rg <- function(data, resampling = rsmp("cv", folds = 5), measure = msr("
   #Repeat sampling.
   data %<>% slice(sample(nrow(.), nrow(.)))
   #Initialize the random forest learner.
-  learner <- lrn("classif.ranger", importance = "impurity", save.memory = F, oob.error = F, num.threads = 12)
+  learner <- lrn("classif.ranger", importance = "impurity", save.memory = F, oob.error = F, num.threads = 1)
   #Convert the results of the repeated sampling into a table, and later convert it into a classification task.
   task <- data %>%
     as.data.table() %>%
