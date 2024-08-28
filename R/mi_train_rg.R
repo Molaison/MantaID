@@ -33,7 +33,7 @@ mi_train_rg <- function(train, test, measure = msr("classif.acc"), instance = NU
   #Divide the test set.
   test_set <- partition(task_predict, ratio = 0)$test
   #Set the Number of Threads.
-  set_threads(learner)
+  #set_threads(learner)
   #Train model.
   learner$train(task_train, row_ids = train_set)
   #Predict model.
