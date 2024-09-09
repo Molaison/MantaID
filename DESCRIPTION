@@ -1,6 +1,6 @@
 Package: MantaID
 Title: A Machine-Learning Based Tool to Automate the Identification of Biological Database IDs
-Version: 1.0.3
+Version: 1.0.4
 Authors@R: 
     c(person("Zhengpeng", "Zeng",email = "molaison@foxmail.com", role = c("aut","cre","ctb"),comment = c(ORCID = "0000-0001-7919-209X")),
     person("Longfei","Mao",email = "longfeimao99@gmail.com",role = c("aut","cph"),comment = c(ORCID = "0000-0003-0759-0501")),

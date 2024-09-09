@@ -34,7 +34,6 @@ if (!requireNamespace("biomaRt", quietly = TRUE))
 install.packages("devtools")
 library(devtools)
 install_github("Molaison/MantaID")
-install_bitbucket("Molaison/MantaID")
 ```
 
 Next, we load the `MantaID` package.
