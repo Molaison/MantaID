@@ -18,5 +18,5 @@ mi_get_confusion <- function(result_list, ifnet = FALSE) {
     as.data.table() %>%
     select(-1)
   #Extract the second column of the matrix and the first column of the matrix as the rows and columns of the confusion matrix, respectively.
-  confusionMatrix(matri_tr %>% pull(2), matri_tr %>% pull(1))
+  confusionMatrix(matri_tr %>% pull(2), matri_tr %>% pull(1), mode = "everything")
 }
